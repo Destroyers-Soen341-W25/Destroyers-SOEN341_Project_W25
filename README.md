@@ -1,2 +1,2 @@
-# SOEN341-project
+# SOEN341project
 Destroyers group, Soen 341 website project
