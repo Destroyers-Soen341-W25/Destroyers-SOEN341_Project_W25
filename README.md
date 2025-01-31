@@ -11,6 +11,7 @@ Users can create topic-specific channels, share media, and engage in one-on-one 
 
 
 # Team Members
+
 * Chaoran Chen
 * Batyrkhan Aliyev 
 * George Guirguis 
@@ -18,3 +19,6 @@ Users can create topic-specific channels, share media, and engage in one-on-one 
 * Stéphanie Geneus 
 
 # Technologies
+* Jetbrains
+* Express
+* MongoDB
