@@ -12,11 +12,11 @@ Users can create topic-specific channels, share media, and engage in one-on-one 
 
 # Team Members
 
-* Chaoran Chen
-* Batyrkhan Aliyev 
-* George Guirguis 
-* Monda Bashatly 
-* Stéphanie Geneus 
+* Chaoran Chen (Backend Dev)
+* Batyrkhan Aliyev (Central Dev)
+* George Guirguis (Backend Dev)
+* Monda Bashatly (Backend Dev)
+* Stéphanie Geneus (Frontend Dev)
 
 # Technologies
 * Jetbrains
