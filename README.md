@@ -1,4 +1,11 @@
 # SOEN341
 # Objective
-Develop an e-learning program.
-Destroyers group, Soen 341 website project
+# Project
+# Team Members
+Chaoran Chen 
+Batyrkhan Aliyev 
+George Guirguis 
+Monda Bashatly 
+Stéphanie Geneus 
+
+# Technologies
