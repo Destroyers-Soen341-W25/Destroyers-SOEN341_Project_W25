@@ -16,5 +16,3 @@ app.post('/message', (req, res) => {
 
 
 app.listen(PORT, () => console.log(`Server running on Port: http://localhost${PORT}`))
-
-localStorage
