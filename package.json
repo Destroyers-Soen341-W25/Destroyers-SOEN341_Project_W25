@@ -1,0 +1,19 @@
+{
+  "name": "destroyers-soen341_project_w25",
+  "version": "1.0.0",
+  "description": "Use the agile development approach to build a communication platform; take advatange of Github for distruibuted control plus access control",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
