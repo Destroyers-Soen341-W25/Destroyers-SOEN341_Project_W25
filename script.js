@@ -55,14 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
             
-            const email = loginForm.querySelector("input[placeholder='Email']").value;
+            const username = loginForm.querySelector("input[placeholder='Username']").value;
             const password = loginForm.querySelector("input[placeholder='Password']").value;
 
             try {
                 const response = await fetch("http://localhost:3000/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name: email, password })
+                    body: JSON.stringify({ name: username, password })
                 });
 
                 const data = await response.json();

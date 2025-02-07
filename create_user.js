@@ -8,6 +8,7 @@ async function createUser(user) {
 try{
     const result = await db.collection('users').add(user);
     console.log('User added with ID: ', result.id);
+    console.log(user);
 }catch(error){
     console.error('Error adding document: ', error);
 }
