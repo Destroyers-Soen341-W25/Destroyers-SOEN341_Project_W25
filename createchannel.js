@@ -1,8 +1,8 @@
 import db from './Database-conf.js';
 
-const channel = {
+/*const channel = {
     "channelname": "channel1",
-}
+}*/
 async function createchannel(channel) {
 try{
     const result = await db.collection('channels').add(channel);
@@ -13,4 +13,4 @@ try{
 }
 //createUser(user1);
 export default createchannel;
-createchannel(channel);
+//createchannel(channel);
