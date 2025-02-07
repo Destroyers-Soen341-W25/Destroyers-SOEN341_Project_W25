@@ -17,6 +17,7 @@ Users can create topic-specific channels, share media, and engage in one-on-one 
 * George Guirguis (Backend Dev)
 * Monda Bashatly (Backend Dev)
 * Stéphanie Geneus (Frontend Dev)
+* Resham Pande (Frontend Dev)
 
 # Technologies
 * Jetbrains
