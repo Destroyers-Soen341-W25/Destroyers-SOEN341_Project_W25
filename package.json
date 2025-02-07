@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "destroyersapi",
   "version": "1.0.0",
   "main": "app.js",
@@ -14,5 +15,20 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "firebase-admin": "^13.1.0"
+=======
+  "name": "node_express_api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+>>>>>>> 182982ece79f1d15c15217b0f55cb1f0e1750f0e
   }
 }
