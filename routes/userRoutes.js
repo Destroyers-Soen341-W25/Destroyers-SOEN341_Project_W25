@@ -5,7 +5,7 @@ import db from '../database.js';
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET || 'supersecretkey';
 
-// middleware for Authentication
+// Middleware for Authentication
 const authenticateToken = (req, res, next) => {
     const token = req.header('Authorization');
     if (!token) return res.status(403).json({ error: 'Access denied' });
@@ -33,11 +33,22 @@ router.get('/:name', async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'admin') return res.status(403).json({ error: 'Unauthorized' });
+
+        const userToDelete = await db.collection('users').doc(req.params.id).get();
+        if (!userToDelete.exists) return res.status(404).json({ error: 'User not found' });
+
+        // Prevent admins from deleting themselves
+        if (req.user.id === req.params.id) {
+            return res.status(400).json({ error: 'You cannot delete your own account' });
+        }
+
         await db.collection('users').doc(req.params.id).delete();
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
+
 
 export default router;

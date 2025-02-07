@@ -1,6 +1,7 @@
 import express from 'express'; // import express
 import bcrypt from 'bcrypt'; // for password hashing
 import jwt from 'jsonwebtoken'; // for JWT tokens
+import { body, validationResult } from 'express-validator';
 import db from '../database.js';
 
 const router = express.Router();
