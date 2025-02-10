@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-function handleAdminRedirect() {
+function handleSuperAdminRedirect() {
     const user = JSON.parse(localStorage.getItem("user"));
     
     if (user.password == "superadmin" && user.name == "superadmin") {
