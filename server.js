@@ -36,7 +36,7 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         if (user.name == 'superadmin' && user.password == 'superadmin'){
-            res.status(200).json({ message: 'founder', user }); 
+            res.status(200).json({ message: 'Welcome M. Founder', user }); 
         }
        else
        {

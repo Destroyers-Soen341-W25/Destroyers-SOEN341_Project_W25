@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
                 if (response.ok) {
                     alert("Login successful!");
-                    localStorage.setItem("user", JSON.stringify(data.user)); // Store user session
+                    localStorage.setItem("user", JSON.stringify(data.user));
                 } else {
                     alert(data.message);
                 }
@@ -85,12 +85,12 @@ function handleAdminRedirect() {
     if (user.password == "superadmin" && user.name == "superadmin") {
         alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
         setTimeout(() => {
-            window.location.href = "super-admin.html"; // Redirect after 1 second
+            window.location.href = "super-admin.html";
         }, 1000);
     }
 }
 
-// Call this function after login
+//to verify
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.querySelector(".form-box-login form");
 
@@ -112,9 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     alert(data.message);
-                    localStorage.setItem("user", JSON.stringify(data.user)); // Store user session
-                    
-                    // 🚀 Call the function to check for admin and redirect
+                    localStorage.setItem("user", JSON.stringify(data.user));
                     handleAdminRedirect();
                 } else {
                     alert(data.message);
