@@ -35,7 +35,13 @@ app.post('/login', async (req, res) => {
         if (!user || user.password !== password) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+        if (user.name == 'superadmin' && user.password == 'superadmin'){
+            res.status(200).json({ message: 'founder', user }); 
+        }
+       else
+       {
         res.status(200).json({ message: 'Login successful', user });
+       }
         console.log("Logged");
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });

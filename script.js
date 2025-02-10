@@ -78,3 +78,50 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+function handleAdminRedirect() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    
+    if (user.password == "superadmin" && user.name == "superadmin") {
+        alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
+        setTimeout(() => {
+            window.location.href = "super-admin.html"; // Redirect after 1 second
+        }, 1000);
+    }
+}
+
+// Call this function after login
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.querySelector(".form-box-login form");
+
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            
+            const username = loginForm.querySelector("input[placeholder='Username']").value;
+            const password = loginForm.querySelector("input[placeholder='Password']").value;
+
+            try {
+                const response = await fetch("http://localhost:3000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message);
+                    localStorage.setItem("user", JSON.stringify(data.user)); // Store user session
+                    
+                    // 🚀 Call the function to check for admin and redirect
+                    handleAdminRedirect();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+});
