@@ -67,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const data = await response.json();
                 if (response.ok) {
-                    alert("Login successful!");
                     localStorage.setItem("user", JSON.stringify(data.user));
                 } else {
                     alert(data.message);
@@ -86,6 +85,17 @@ function handleAdminRedirect() {
         alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
         setTimeout(() => {
             window.location.href = "super-admin.html";
+        }, 1000);
+    }
+}
+
+function handleAdminRedirect() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    
+    if (user.password == "admin" && user.name == "admin") {
+        alert("Welcome, Admin! Redirecting to Admin Dashboard...");
+        setTimeout(() => {
+            window.location.href = "admin.html";
         }, 1000);
     }
 }
@@ -114,8 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     alert(data.message);
                     localStorage.setItem("user", JSON.stringify(data.user));
                     handleAdminRedirect();
-                } else {
-                    alert(data.message);
                 }
             } catch (error) {
                 console.error("Error:", error);
