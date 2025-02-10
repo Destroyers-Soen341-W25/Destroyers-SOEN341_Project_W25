@@ -48,48 +48,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Team Creation (Admin Only)
-app.post('/teams', async (req, res) => {
-    const { teamName, adminName } = req.body;
-    if (!teamName || !adminName) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
-    try {
-        const admin = await getUser(adminName);
-        if (!admin || admin.role !== 'admin') {
-            return res.status(403).json({ message: 'Only admins can create teams' });
-        }
-        await db.collection('teams').add({ teamName, adminName, members: [] });
-        res.status(201).json({ message: 'Team created successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating team', error });
-    }
-});
-
-// Assign User to Team (Admin Only)
-app.post('/teams/:teamId/members', async (req, res) => {
-    const { userName, adminName } = req.body;
-    const { teamId } = req.params;
-    if (!userName || !adminName) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
-    try {
-        const admin = await getUser(adminName);
-        if (!admin || admin.role !== 'admin') {
-            return res.status(403).json({ message: 'Only admins can assign users to teams' });
-        }
-        const teamRef = db.collection('teams').doc(teamId);
-        const team = await teamRef.get();
-        if (!team.exists) {
-            return res.status(404).json({ message: 'Team not found' });
-        }
-        await teamRef.update({ members: [...team.data().members, userName] });
-        res.status(200).json({ message: 'User added to team' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error assigning user to team', error });
-    }
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
