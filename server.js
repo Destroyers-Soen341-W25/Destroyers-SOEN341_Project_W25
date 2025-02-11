@@ -5,7 +5,7 @@ import createUser from './create_user.js';
 import getUser from './getuser.js';
 import db from './Database-conf.js';
 import removeChannel from './removechannel.js';
-import {assignUserToChannel,removeUserFromChannel} from './assign_user-channel.js';
+import {assignUserToChannel} from './assign_user-channel.js';
 import {changeroles} from './changeroles.js';
 
 const app = express();
