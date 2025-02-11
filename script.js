@@ -89,7 +89,7 @@ function handleSuperAdminRedirect() {
     const user = JSON.parse(localStorage.getItem("user"));
     
     if (user.password == 'superadmin' && user.name == 'superadmin') {
-        alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
+        alert("Welcome, Super Admin! Redirecting to Super Admin Dashboard...");
         setTimeout(() => {
             window.location.href = "super-admin.html";
         }, 1000);
