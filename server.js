@@ -85,7 +85,7 @@ app.post('/assign-user',async(req,res)=>{
 app.post('/remove-user', async (req, res) => {
     const { userId, channelId } = req.body;
     try {
-        const updatedChannel = await removeUserFromChannel(userId, channelId);
+        const updatedChannel = await removefromChannel(userId, channelId);
         res.status(200).json({ message: 'User removed from channel', updatedChannel });
     } catch (error) {
         res.status(500).json({ message: 'Error removing user', error });
