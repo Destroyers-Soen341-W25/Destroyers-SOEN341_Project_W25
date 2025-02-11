@@ -66,11 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const data = await response.json();
-                if (response.ok && user.name == 'superadmin' && user.password == 'superadmin') {
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    handleSuperAdminRedirect();
-                } 
-                else if (response.ok && user.name == 'test' && user.password == '1234')
+                if (response.ok)
                 {
                     localStorage.setItem("user", JSON.stringify(data.user));
                    // SuperAdminRedirect();
