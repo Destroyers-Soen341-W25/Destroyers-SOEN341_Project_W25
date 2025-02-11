@@ -17,4 +17,4 @@ export async function assignUserToChannel(userId,channelId){
     }
 }
 //assignUserToChannel("jLe6i69vnjVvH2ZpOWxc","8N8FvtyC07CJzUsbwUNU");
-console.log( await assignUserToChannel("fO2aiPXfJGwJj1XUWCFi","8N8FvtyC07CJzUsbwUNU"));
+//console.log( await assignUserToChannel("fO2aiPXfJGwJj1XUWCFi","8N8FvtyC07CJzUsbwUNU"));
