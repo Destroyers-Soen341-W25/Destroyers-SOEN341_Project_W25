@@ -1,4 +1,26 @@
 # SOEN341
 # Objective
-Develop an e-learning program.
-Destroyers group, Soen 341 website project
+
+Use the agile development approach to build a communication platform; take advatange of Github for distruibuted control plus access control
+
+# Project
+
+ChatHaven is a versatile communication platform designed for seamless interaction through text channels and direct messaging. Whether you’re collaborating with a team, connecting with a community, or chatting privately with friends, ChatHaven offers an intuitive and organized space to stay connected. 
+
+Users can create topic-specific channels, share media, and engage in one-on-one conversations, all while enjoying customizable features that enhance the experience. With a clean interface and robust privacy options, ChatHaven is the perfect hub for meaningful and efficient communication.
+
+
+# Team Members
+
+* Chaoran Chen (Backend Dev)
+* Batyrkhan Aliyev (Central Dev)
+* George Guirguis (Backend Dev)
+* Monda Bashatly (Backend Dev)
+* Stéphanie Geneus (Frontend Dev)
+* Resham Pande (Frontend Dev)
+
+# Technologies
+* Jetbrains
+* VScode
+* Express
+* Firebase
