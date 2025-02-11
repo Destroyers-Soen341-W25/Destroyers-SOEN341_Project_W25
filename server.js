@@ -35,12 +35,21 @@ app.post('/login', async (req, res) => {
         if (!user || user.password !== password) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+<<<<<<< HEAD
         // if (user.name == 'superadmin' && user.password == 'superadmin'){
         //     res.status(200).json({ message: 'Welcome M. Founder', user }); 
         // }
         // else if (user.name == 'max' && user.password == '1234'){
         //     res.status(200).json({ message: 'Welcome M. Admin', user }); 
         // }
+=======
+        if (user.name == 'superadmin' && user.password == 'superadmin'){
+            res.status(200).json({ message: 'Welcome M. Founder', user }); 
+        }
+        else if (user.name == 'test' && user.password == '1234'){
+            res.status(200).json({ message: 'Welcome M. Admin', user }); 
+        }
+>>>>>>> 6cf6d1ba9f5f9842754d7cd9f69cff0d052c8ce1
        else
        {
         res.status(200).json({ message: 'Login successful', user });

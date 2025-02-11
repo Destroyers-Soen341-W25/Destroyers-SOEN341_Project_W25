@@ -66,7 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const data = await response.json();
-                if (response.ok) {
+                if (response.ok && user.name == 'superadmin' && user.password == 'superadmin') {
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    handleSuperAdminRedirect();
+                } 
+                else if (response.ok && user.name == 'test' && user.password == '1234')
+                {
                     localStorage.setItem("user", JSON.stringify(data.user));
                    // SuperAdminRedirect();
                    console.log("Calling handler");
@@ -104,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //     }
 // }
 
-function handleAdminRedirect() {
+function handleSuperAdminRedirect() {
     const user = JSON.parse(localStorage.getItem("user"));
 
     console.log("entered handler");
