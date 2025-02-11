@@ -15,4 +15,4 @@ async function getUser(name) {
 }
 }
 export default getUser;
-console.log(await getUser("test1")); 
+//console.log(await getUser("test1")); 
