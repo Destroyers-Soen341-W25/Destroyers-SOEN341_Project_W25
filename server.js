@@ -38,7 +38,7 @@ app.post('/login', async (req, res) => {
         if (user.name == 'superadmin' && user.password == 'superadmin'){
             res.status(200).json({ message: 'Welcome M. Founder', user }); 
         }
-        else if (user.name == 'max' && user.password == '1234'){
+        else if (user.name == 'test' && user.password == '1234'){
             res.status(200).json({ message: 'Welcome M. Admin', user }); 
         }
        else

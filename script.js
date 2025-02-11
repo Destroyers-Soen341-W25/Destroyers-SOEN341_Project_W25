@@ -66,9 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const data = await response.json();
-                if (response.ok) {
+                if (response.ok && user.name == 'superadmin' && user.password == 'superadmin') {
                     localStorage.setItem("user", JSON.stringify(data.user));
-                } else {
+                    handleSuperAdminRedirect();
+                } 
+                else if (response.ok && user.name == 'test' && user.password == '1234')
+                {
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    handleAdminRedirect();
+                }
+                else {
                     alert(data.message);
                 }
             } catch (error) {
@@ -81,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function handleSuperAdminRedirect() {
     const user = JSON.parse(localStorage.getItem("user"));
     
-    if (user.password == "superadmin" && user.name == "superadmin") {
+    if (user.password == 'superadmin' && user.name == 'superadmin') {
         alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
         setTimeout(() => {
             window.location.href = "super-admin.html";
@@ -92,7 +99,7 @@ function handleSuperAdminRedirect() {
 function handleAdminRedirect() {
     const user = JSON.parse(localStorage.getItem("user"));
     
-    if (user.password == "admin" && user.name == "admin") {
+    if (user.password == '1234' && user.name == 'test') {
         alert("Welcome, Admin! Redirecting to Admin Dashboard...");
         setTimeout(() => {
             window.location.href = "admin.html";
