@@ -84,8 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         }, 1000);
                     }
 
+                if (response.ok) {
+                   // alert("Login successful!");
+                    localStorage.setItem("user", JSON.stringify(data.user)); // Store user session
+
                 } else {
-                    alert(data.message);
+                    //alert(data.message);
                 }
             } catch (error) {
                 console.error("Error:", error);
