@@ -8,7 +8,11 @@ import db from './Database-conf.js';
 import removeChannel from './removechannel.js';
 import {assignUserToChannel} from './assign_user-channel.js';
 import {changeroles} from './changeroles.js';
-
+import {createchannel} from './createchannel.js';
+import {getAllChannels} from './getAllChannels.js';
+import {getAllUsers} from './getAllUsers.js';
+import {getchannel} from './getchannel.js';
+import {removefromChannel} from './removefromchannel.js';
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
@@ -51,6 +55,39 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Error logging in', error });
     }
 });
+//Get all users
+app.get('/all-users', async (req, res) => {
+    try {
+        const users = await getAllUsers();
+        res.status(200).json({ users });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error });
+    }
+});
+//Get user
+app.get('/get-user', async (req, res) => {
+    const { username } = req.body;
+    try {
+        const user = await getUser(username);
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user', error });
+    }
+});
+
+//createchannel
+app.post('/create-channel', async (req, res) => {
+    const { channelName } = req.body;
+    if (!channelName) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+    try {
+        const channel = await createchannel(channelName);
+        res.status(201).json({ message: 'Channel created successfully', channel });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating channel', error });
+    }
+});
 //Remove channel
 app.delete('/remove-channel',async (req,res) => {
     const {channelId}=req.body;
@@ -59,6 +96,25 @@ app.delete('/remove-channel',async (req,res) => {
         res.status(200).json({ message: 'Channel removed successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error removing channel', error });
+    }
+});
+//Get channel
+app.get('/get-channel', async (req, res) => {
+    const { channelId } = req.body;
+    try {
+        const channel = await getchannel(channelId);
+        res.status(200).json({ channel });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching channel', error });
+    }
+});
+//Get all channels
+app.get('/all-channels', async (req, res) => {
+    try {
+        const channels = await getAllChannels();
+        res.status(200).json({ channels });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching channels', error });
     }
 });
 //Change roles
