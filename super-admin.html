@@ -20,22 +20,29 @@
   </div>
   <div>
     <h2>Users</h2>
+
     <form id="assign-user-form">
       <select id="channel-select" required></select>
-      <input type="text" id="user-username" placeholder="Username" required>
+      <select id="user-select" required></select>
       <button type="submit" class="gray-button">Assign User</button>
     </form>
+
+
     <form id="deassign-user-form">
       <select id="channel-deassign" required></select>
-      <input type="text" id="deassign-username" placeholder="Username" required>
+      <select id="user-deassign" required></select>
       <button type="submit" class="gray-button">De-assign User</button>
     </form>
+
+
     <form id="promote-user-form">
-      <input type="text" id="promote-username" placeholder="Username" required>
+      <select id="promote-user" required></select>
       <button type="submit" class="gray-button">Promote to Admin</button>
     </form>
+
+
     <form id="demote-user-form">
-      <input type="text" id="demote-username" placeholder="Username" required>
+      <select id="demote-user" required></select>
       <button type="submit" class="gray-button">Demote from Admin</button>
     </form>
   </div>

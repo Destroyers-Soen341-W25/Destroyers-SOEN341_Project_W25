@@ -1,17 +1,18 @@
 import db from './Database-conf.js';
 
-async function getAllChannels() {
-    try {
+
+
+export default async function getuserschannel(userId){
+    try{
         const channelsSnapshot = await db.collection('channels').get();
         const channels = channelsSnapshot.docs.map(doc => ({
             id: doc.id, ...doc.data()
         }));
-
-        return channels;
-    } catch (error) {
+        const userchannels = channels.filter(channel => channel.userIds.includes(userId));
+        return userchannels;
+    }catch(error){
         console.error("Error fetching channels:", error);
         throw error; 
     }
 }
-export default getAllChannels;
-console.log( await getAllChannels());
+

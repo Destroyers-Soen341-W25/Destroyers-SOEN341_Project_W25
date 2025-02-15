@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = registerForm.querySelector("input[placeholder='Password']").value;
             const isAdmin = registerForm.querySelector("input[type='checkbox']").checked;
             
-            const role = isAdmin ? "admin" : "member";
+            const role = "member";
 
             try {
                 const response = await fetch("http://localhost:3000/register", {
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (loginForm) {
-        loginForm.addEventListener("submit", async (event) => {
+        loginForm.addEventListener("submit", async (event) => { 
             event.preventDefault();
             
             const username = loginForm.querySelector("input[placeholder='Username']").value;
@@ -66,32 +66,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const data = await response.json();
-                if (response.ok)
-                {
+
+
+                if (response.ok){
+
                     localStorage.setItem("user", JSON.stringify(data.user));
-                   // SuperAdminRedirect();
-                   console.log("Calling handler");
-                    //handleAdminRedirect();
-                    if(data.user.name == "superadmin" && data.user.password == "superadmin"){
+
+                   
+
+                    if (data.user.role =="admin"){
                         alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
+                            setTimeout(() => {
+                            window.location.href = "admin.html";
+                                }, 1000);
+                    }
+                    else if(data.user.role=="member"){
+
+                        alert("Welcome back, ", data.user.username, "!");
+                        setTimeout(() => {
+                            window.location.href = "channel.html";
+                                }, 1000);
+                    }
+                    else if(data.user.role == "superadmin"){
+                        alert("Welcome back, ", data.user.username, "!");
                         setTimeout(() => {
                             window.location.href = "super-admin.html";
-                        }, 1000);
+                                }, 1000);
                     }
-                    else if(data.user.name == "test" && data.user.password == "1234"){
-                        setTimeout(() => {
-                            window.location.href = "admin.html";
-                        }, 1000);
-                    }
-
-                if (response.ok) {
-                   // alert("Login successful!");
-                    localStorage.setItem("user", JSON.stringify(data.user)); // Store user session
-
-                } else {
-                    //alert(data.message);
                 }
-            }
+
+           
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -101,16 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// function SuperAdminRedirect() {
-//     const user = JSON.parse(localStorage.getItem("user"));
-    
-//     if (user.password == "superadmin" && user.name == "superadmin") {
-//         alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
-//         setTimeout(() => {
-//             window.location.href = "super-admin.html";
-//         }, 1000);
-//     }
-// }
+
 
 function handleSuperAdminRedirect() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -132,34 +127,4 @@ function handleSuperAdminRedirect() {
     }
 }
 
-//to verify
-// document.addEventListener("DOMContentLoaded", () => {
-//     const loginForm = document.querySelector(".form-box-login form");
 
-//     if (loginForm) {
-//         loginForm.addEventListener("submit", async (event) => {
-//             event.preventDefault();
-            
-//             const username = loginForm.querySelector("input[placeholder='Username']").value;
-//             const password = loginForm.querySelector("input[placeholder='Password']").value;
-
-//             try {
-//                 const response = await fetch("http://localhost:3000/login", {
-//                     method: "POST",
-//                     headers: { "Content-Type": "application/json" },
-//                     body: JSON.stringify({ name: username, password })
-//                 });
-
-//                 const data = await response.json();
-
-//                 if (response.ok) {
-//                     alert(data.message);
-//                     localStorage.setItem("user", JSON.stringify(data.user));
-//                     handleAdminRedirect();
-//                 }
-//             } catch (error) {
-//                 console.error("Error:", error);
-//             }
-//         });
-//     }
-// });

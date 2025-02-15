@@ -10,7 +10,7 @@ async function getAllUsers() {
         return channels;
     } catch (error) {
         console.error("Error fetching channels:", error);
-        throw error; // Re-throw the error to handle it in the API route
+        throw error; 
     }
 }
 export default getAllUsers;

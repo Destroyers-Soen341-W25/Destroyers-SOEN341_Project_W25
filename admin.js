@@ -1,63 +1,156 @@
-let channels = ['General', 'Support'];
-let users = [
-    { username: 'user', role: 'user', channels: ['General'] },
-    { username: 'admin', role: 'admin', channels: ['General', 'Support'] }
-];
+document.addEventListener("DOMContentLoaded", () => {
+    const createChannelForm = document.getElementById("create-channel-form");
+    const removeChannelButton = document.getElementById("remove-channel");
+    const assignUserForm = document.getElementById("assign-user-form");
+    const deassignUserForm = document.getElementById("deassign-user-form");
+    const channelsDropdown = document.getElementById("channels-dropdown");
+    const channelSelect = document.getElementById("channel-select");
+    const usersDropdown = document.getElementById('user-select');
+    const channelDeassign = document.getElementById("channel-deassign");
+    const userDeassign = document.getElementById("user-deassign");
 
-document.addEventListener('DOMContentLoaded', function () {
-    renderChannels();
-    renderChannelSelects();
-});
 
-document.getElementById('create-channel-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const channelName = document.getElementById('channel-name').value;
-    if (!channels.includes(channelName)) {
-        channels.push(channelName);
-        renderChannels();
-        renderChannelSelects();
-        alert(`Channel "${channelName}" created successfully!`);
+
+
+    async function fetchUsers() {
+        try {
+            console.log("Fetching users...");
+            const response = await fetch("http://localhost:3000/all-users");  
+            const data = await response.json();
+            renderUserSelects(data.users);  
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
     }
-});
-
-document.getElementById('remove-channel').addEventListener('click', function () {
-    const selectedChannel = document.getElementById('channels-dropdown').value;
-    channels = channels.filter(channel => channel !== selectedChannel);
-    renderChannels();
-    renderChannelSelects();
-    alert(`Channel "${selectedChannel}" removed!`);
-});
-
-document.getElementById('assign-user-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const channel = document.getElementById('channel-select').value;
-    const userUsername = document.getElementById('user-username').value;
-    const user = users.find(u => u.username === userUsername);
-    if (user && !user.channels.includes(channel)) {
-        user.channels.push(channel);
-        alert(`User "${userUsername}" assigned to channel "${channel}"!`);
+    
+    function renderUserSelects(users) {
+        usersDropdown.innerHTML = "";
+        userDeassign.innerHTML="";
+    
+        users.forEach(user => {
+            const option = new Option(user.name, user.id); 
+            usersDropdown.add(option.cloneNode(true)); 
+            userDeassign.add(option.cloneNode(true));
+           
+            
+        });
     }
-});
 
-document.getElementById('deassign-user-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const channel = document.getElementById('channel-deassign').value;
-    const userUsername = document.getElementById('deassign-username').value;
-    const user = users.find(u => u.username === userUsername);
-    if (user && user.channels.includes(channel)) {
-        user.channels = user.channels.filter(ch => ch !== channel);
-        alert(`User "${userUsername}" de-assigned from channel "${channel}"!`);
+
+    async function fetchChannels() {
+        try {
+            console.log("Fetching...");
+            const response = await fetch("http://localhost:3000/all-channels");
+            const data = await response.json();
+            renderChannelSelects(data.channels);
+        } catch (error) {
+            console.error("Error fetching channels:", error);
+        }
     }
+
+    function renderChannelSelects(channels) {
+        channelsDropdown.innerHTML = "";
+        channelSelect.innerHTML = "";
+        channelDeassign.innerHTML = "";
+
+        channels.forEach(channel => {
+            const option = new Option(channel.channelname, channel.id);
+            channelsDropdown.add(option.cloneNode(true));
+            channelSelect.add(option.cloneNode(true));
+            channelDeassign.add(option.cloneNode(true));
+        });
+    }
+
+    if (createChannelForm) {
+        createChannelForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const channelName = document.getElementById("channel-name").value;
+
+            try {
+                const response = await fetch("http://localhost:3000/create-channel", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ channelName: channelName })
+                });
+
+                const data = await response.json();
+                alert(data.message);
+                fetchChannels();
+                fetchUsers();
+            } catch (error) {
+                console.error("Error creating channel:", error);
+            }
+        });
+    }
+
+    if (removeChannelButton) {
+        removeChannelButton.addEventListener("click", async () => {
+            const selectedChannel = channelsDropdown.value;
+            if (!selectedChannel) return;
+
+            try {
+                const response = await fetch("http://localhost:3000/remove-channel", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ channelId : selectedChannel })
+                });
+
+                const data = await response.json();
+                alert(data.message);
+                fetchChannels();
+                fetchUsers();
+            } catch (error) {
+                console.error("Error removing channel:", error);
+            }
+        });
+    }
+
+    if (assignUserForm) {
+        assignUserForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const channelId = channelSelect.value;
+            const userId = usersDropdown.value;
+
+            try {
+                const response = await fetch("http://localhost:3000/assign-user", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ channelId, userId })
+                });
+
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error("Error assigning user:", error);
+            }
+        });
+    }
+
+    if (deassignUserForm) {
+        deassignUserForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const channelId = channelDeassign.value;
+            const userId = userDeassign.value;
+
+        
+            try {
+                const response = await fetch("http://localhost:3000/deassign-user", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ channelId, userId })
+                });
+
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error("Error de-assigning user:", error);
+            }
+        });
+    }
+
+  
+
+  
+    fetchChannels();
+    fetchUsers();
 });
-
-function renderChannels() {
-    const dropdown = document.getElementById('channels-dropdown');
-    dropdown.innerHTML = channels.map(channel => `<option value="${channel}">${channel}</option>`).join('');
-}
-
-function renderChannelSelects() {
-    const selects = [document.getElementById('channel-select'), document.getElementById('channel-deassign')];
-    selects.forEach(select => {
-        select.innerHTML = channels.map(channel => `<option value="${channel}">${channel}</option>`).join('');
-    });
-}
