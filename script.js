@@ -91,10 +91,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     //alert(data.message);
                 }
+                if (response.ok) {
+                // Save the user in localStorage
+                localStorage.setItem("user", JSON.stringify(data.user));
+  
+                 // Redirect to the new channel page after login
+                  window.location.href = "channel.html";
+              } 
+              if (response.ok) {
+                // 'data.user' should now have { name, password, role, channels: [...] } if channels exist
+                localStorage.setItem("user", JSON.stringify(data.user));
+                // Then redirect to your channel page
+                window.location.href = "channel.html";
+              } else {
+                alert(data.message); // e.g. 'Invalid credentials'
+              }
+  
             }
             } catch (error) {
                 console.error("Error:", error);
             }
+            
             
         });
         

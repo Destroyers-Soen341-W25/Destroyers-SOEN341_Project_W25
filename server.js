@@ -35,18 +35,16 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Missing credentials' });
     }
     try {
-        const user = await getUser(name);
+        const user = await getUser(name); // This returns { name, password, role, channels: [...] }
         if (!user || user.password !== password) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+        // e.g. if superadmin
         if (user.name == 'superadmin' && user.password == 'superadmin'){
-            res.status(200).json({ message: 'founder', user }); 
+            return res.status(200).json({ message: 'founder', user });
+        } else {
+            return res.status(200).json({ message: 'Login successful', user });
         }
-       else
-       {
-        res.status(200).json({ message: 'Login successful', user });
-       }
-        console.log("Logged");
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });
     }

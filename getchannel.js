@@ -1,14 +1,22 @@
+// getchannel.js
 import db from './Database-conf.js';
 
-async function getchannel(channelname) {
-    try{
-    const insertedUser = await db.collection('channels').where('channels', '==', channelname).get();
-    const exists = insertedUser.docs.length > 0;
-    if (exists) {
-         return insertedUser.docs[0].data();
+/**
+ * If you truly store channels by doc ID,
+ * then fetching it is as simple as:
+ */
+async function getchannel(channelId) {
+  try {
+    const docRef = db.collection('channels').doc(channelId);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists) {
+      return null;
     }
-} catch (error) {
-        console.error("Error adding user:", error);
+    return docSnap.data();  // e.g. { channelname: "haha", userIds: [...] }
+  } catch (error) {
+    console.error("Error in getchannel:", error);
+    return null;
+  }
 }
-}
+
 export default getchannel;
