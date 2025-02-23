@@ -6,6 +6,7 @@ import createUser from './create_user.js';
 import getUser from './getuser.js';
 import db from './Database-conf.js';
 import removeChannel from './removechannel.js';
+import {removefromChannel} from './remove-user-from-channel.js';
 import {assignUserToChannel} from './assign_user-channel.js';
 import {changeroles} from './changeroles.js';
 
@@ -39,7 +40,7 @@ app.post('/login', async (req, res) => {
         if (!user || user.password !== password) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        if (user.name == 'superadmin' && user.password == 'superadmin'){
+        if (user.name === 'superadmin' && user.password === 'superadmin'){
             res.status(200).json({ message: 'founder', user });
         }
         else
