@@ -209,6 +209,36 @@ app.post('/get-messages', async (req, res) => {
     }
 });
 
+//remove messages from channel
+app.post('/remove-messages', async (req, res) => {
+    const { channelId, messageIds } = req.body;
+    try {
+        await removeMessages(channelId, messageIds);
+        res.status(200).json({ message: 'Messages removed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error removing messages', error });
+    }
+});
+//send a DM
+app.post('/send-dm', async (req, res) => {
+    const { recipientId, senderId, message } = req.body;
+    try {
+        await sendDM(senderId, message,recipientId);
+        res.status(201).json();
+    } catch (error) {
+        res.status(500).json({ message: 'Error sending DM', error });
+    }
+});
+//get all DM
+app.post('/get-dms', async (req, res) => {
+    const { userId } = req.body;
+    try {
+        const dms = await getDMs(userId);
+        res.status(200).json({ dms });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching DMs', error });
+    }
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
