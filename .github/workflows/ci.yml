@@ -3,11 +3,11 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - newBatyr
+      - main
       - dev
   pull_request:
     branches:
-      - newBatyr
+      - main
       - dev
 
 jobs:
