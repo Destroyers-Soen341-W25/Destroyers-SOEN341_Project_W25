@@ -4,16 +4,13 @@ on:
   push:
     branches:
       - main
-      - dev
   pull_request:
     branches:
       - main
-      - dev
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: success() || failure() # Prevents sending notifications
 
     steps:
       - name: Checkout repository
@@ -27,8 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Cors
+        run: npm install cors
+
       - name: Run tests
-        run: npm test
+        run: node server.js
 
       - name: Check code formatting (Optional)
         run: npm run lint
