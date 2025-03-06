@@ -8,7 +8,11 @@ export default async function getuserschannel(userId){
         const channels = channelsSnapshot.docs.map(doc => ({
             id: doc.id, ...doc.data()
         }));
-        const userchannels = channels.filter(channel => channel.userIds.includes(userId));
+        console.log(userId);
+        
+        //const userchannels = channels.filter(channel => channel.userIds.includes(userId));
+        const userchannels = channels.filter(channel => channel.userIds.map(String).includes(String(userId)));
+        console.log(userchannels);
         return userchannels;
     }catch(error){
         console.error("Error fetching channels:", error);

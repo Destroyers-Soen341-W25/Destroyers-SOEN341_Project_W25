@@ -16,6 +16,9 @@ import removefromChannel from './remove-user-from-channel.js';
 import getuserschannel from './getAllUserChannel.js';
 import sendmessages from './messages.js';
 import getmessages from './getmessages.js';
+import getchat from './getchat.js';
+import SendDM from './sendDM.js';
+import Sendmessage from './messages.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -190,9 +193,11 @@ app.post('/deassign-user', async (req, res) => {
 //Send message
 app.post('/send-message', async (req, res) => {
     const {channelId, message, userId} = req.body;
+        console.log("IDDDD", userId);
+    
     try {
-        await sendmessages(userId, channelId, message);
-        res.status(201).json();
+        await Sendmessage(userId, channelId, message);
+        res.status(201).json({success: true});
     } catch (error) {
         res.status(500).json({ message: 'Error sending message', error });
     }
@@ -211,34 +216,40 @@ app.post('/get-messages', async (req, res) => {
 
 //remove messages from channel
 app.post('/remove-messages', async (req, res) => {
-    const { channelId, messageIds } = req.body;
+    const { messageId, channelId } = req.body;
+    console.log("Received delete request:", { channelId, messageId });
+    
     try {
-        await removeMessages(channelId, messageIds);
-        res.status(200).json({ message: 'Messages removed successfully' });
+       const result = await removemessages(channelId, messageId);
+       
+        res.status(201).json({ result });
     } catch (error) {
-        res.status(500).json({ message: 'Error removing messages', error });
+        res.status(500).json({ message: 'Error removing messages', error: error.message });
     }
 });
 //send a DM
 app.post('/send-dm', async (req, res) => {
-    const { recipientId, senderId, message } = req.body;
+    const { receiverId, senderId, message } = req.body;
+    console.log(" REVIECER ID IS: ", receiverId);
     try {
-        await sendDM(senderId, message,recipientId);
-        res.status(201).json();
+        await SendDM(senderId, message,receiverId);
+        res.status(201).json({success: true});
     } catch (error) {
-        res.status(500).json({ message: 'Error sending DM', error });
+        res.status(500).json({ message: 'Error sending DM', error: error.message });
     }
 });
 //get all DM
 app.post('/get-dms', async (req, res) => {
     const { userId } = req.body;
     try {
-        const dms = await getDMs(userId);
+        const dms = await getchat(userId);
         res.status(200).json({ dms });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching DMs', error });
     }
 });
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

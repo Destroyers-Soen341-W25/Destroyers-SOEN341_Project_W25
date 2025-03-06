@@ -1,8 +1,9 @@
 import db from './Database-conf.js';
 
 export default async function removemessages(channelId, messageId) {
+    console.log("Starting to delete removemessage");
     try {
-        
+        console.log("delete request for func:", { channelId, messageId });
         const messageDoc = await db.collection('channels').doc(channelId).collection('messages').doc(messageId).get();
 
         if (!messageDoc.exists) {

@@ -1,9 +1,9 @@
 import db from './Database-conf.js';
 
 // message
-const message ={
-    content: 'please work!!',
-}
+// const message ={
+//     content: 'please work!!',
+// }
 
 async function Sendmessage(userId,channelId, message) {
 try{
@@ -20,5 +20,5 @@ try{
 }
 
 export default Sendmessage;
-console.log(await Sendmessage('gWk9GzaIsxy0ng9ULzfO','8DNT3M9LdTWEIgn2oqRm',message));
+//console.log(await Sendmessage('gWk9GzaIsxy0ng9ULzfO','8DNT3M9LdTWEIgn2oqRm',message));
 

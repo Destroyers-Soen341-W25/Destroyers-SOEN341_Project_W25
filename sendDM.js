@@ -9,6 +9,7 @@ async function SendDM(userId, messageContent, receiverId) {
             content: messageContent, 
             timestamp: new Date(),
         };
+        //console.log(messageData);
 
         const senderMessageRef = await db.collection('users').doc(userId).collection('messages').add(messageData);
 

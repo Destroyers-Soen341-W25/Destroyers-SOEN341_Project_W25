@@ -74,13 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                    
 
-                    if (data.user.role =="admin"){
-                        alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
-                            setTimeout(() => {
-                            window.location.href = "admin.html";
-                                }, 1000);
-                    }
-                    else if(data.user.role=="member"){
+                    // if (data.user.role =="admin"){
+                    //     alert("Welcome, Admin! Redirecting to Super Admin Dashboard...");
+                    //         setTimeout(() => {
+                    //         window.location.href = "admin.html";
+                    //             }, 1000);
+                    // }
+                     if(data.user.role=="member" || "admin"){
 
                         alert("Welcome back, ", data.user.username, "!");
                         setTimeout(() => {

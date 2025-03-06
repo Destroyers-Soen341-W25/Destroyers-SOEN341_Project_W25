@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Page</title>
+    <link rel="stylesheet" href="webstyle.css" />
+</head>
+<body>
+    <header>
+        <h2 class="Logo">Destroyers</h2>
+        <nav class="navigation">
+            <a href="chats.html">Back</a>
+        </nav>
+    </header>
+
+
+
+    <div class="body">
+        <h2>User Details</h2>
+        <p><strong>User ID:</strong> <span id="userId"></span></p>
+        <p><strong>Name:</strong> <span id="userName"></span></p>
+        <p><strong>Role:</strong> <span id="userRole"></span></p>
+    
+        <h3>Messages</h3>
+        <div id="messagesContainer">
+            <!-- Сообщения будут отображаться здесь -->
+        </div>
+
+
+        <h3>Send a Message</h3>
+<form id="sendMessageForm">
+    <textarea id="messageContent" placeholder="Type your message..." required></textarea>
+    <button type="submit">Send</button>
+</form>
+
+
+    </div>
+
+    <script>
+
+
+document.getElementById("sendMessageForm").addEventListener("submit", async (e) => {
+    e.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
+
+    const messageContent = document.getElementById("messageContent").value.trim();
+    if (!messageContent) return; // Если сообщение пустое, не отправляем
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetUserId = urlParams.get("userId"); // ID выбранного пользователя
+    const ourId = urlParams.get("our_id"); // ID текущего пользователя
+
+    try {
+        const response = await fetch("http://localhost:3000/send-dm", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                senderId: ourId,
+                receiverId: targetUserId,
+                message: messageContent,
+                
+            }),
+        });
+
+        const data = await response.json();
+        console.log(data)
+        if (data.success) {
+            // После успешной отправки очищаем поле ввода и обновляем сообщения
+            document.getElementById("messageContent").value = "";
+            await fetchMessages(ourId, targetUserId); // Обновляем список сообщений
+        } else {
+            console.error("Failed to send message");
+        }
+    } catch (error) {
+        console.error("Error sending message:", error);
+    }
+});
+
+
+
+
+
+        async function fetchUserDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get("username");
+            const ourId = urlParams.get("our_id");
+            console.log("USERID IS: ", username, "Our ID is: ", ourId);
+
+            try {
+                
+                const response = await fetch("http://localhost:3000/get-user", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: username })
+                });
+                const data = await response.json();
+                console.log(data);
+                const user = data.user;
+
+                document.getElementById("userId").textContent = user.id;
+                document.getElementById("userName").textContent = user.name;
+                document.getElementById("userRole").textContent = user.role;
+
+                await fetchMessages(ourId, user.id);
+
+            } catch (error) {
+                console.error("Error fetching user details:", error);
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////
+
+        async function fetchMessages(our_id, targetId) {
+    try {
+
+        const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get("username");
+
+        // Запрос всех сообщений
+        const response = await fetch("http://localhost:3000/get-dms", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: our_id }),
+        });
+
+        const data = await response.json();
+        console.log(data);
+        const messages = data.dms;
+
+        const messagesContainer = document.getElementById("messagesContainer");
+        messagesContainer.innerHTML = ""; // Очищаем контейнер перед добавлением новых сообщений
+
+        if (messages.length === 0) {
+            messagesContainer.innerHTML = "<p>No messages found</p>";
+        } else {
+            // Отображаем все сообщения
+            console.log("OURID IS:", our_id, " TARGET IS: ", targetId);
+            messages.forEach(message => {
+                if ((message.senderId === our_id && message.receiverId === targetId) || 
+                    (message.senderId === targetId && message.receiverId === our_id)) {
+                    const messageElement = document.createElement("div");
+                    messageElement.classList.add("message");
+                    messageElement.innerHTML = `<p><strong>${message.senderId === our_id ? 'You' : username}:</strong> ${message.content}</p>`;
+                    messagesContainer.appendChild(messageElement);
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Error fetching messages:", error);
+    }
+}
+
+
+        /////////////////////////////////////////////////////////////////
+
+        fetchUserDetails();
+    </script>
+</body>
+</html>

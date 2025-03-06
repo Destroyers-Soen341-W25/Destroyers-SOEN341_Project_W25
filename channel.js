@@ -3,7 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const channelNameEl = document.getElementById("channelName");
     const assignedUserEl = document.getElementById("assignedUser");
+    
 
+    
+
+  
 
   async function fetch_channels(username) {
     try {
@@ -20,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const current_user_id = data.user.id;
       console.log("ID IS: ", current_user_id );
 
+
+      if (data.user.role === "admin") {
+        addAdminButton(); // Добавляем кнопку для админа
+    }
 
       const response2 = await fetch("http://localhost:3000/get-user-channels", {
         method: "POST",
@@ -56,7 +64,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+function addAdminButton() {
+  const adminButton = document.createElement("button");
+  adminButton.textContent = "Go to Admin Page";
+  adminButton.id = "adminPage";
+  adminButton.addEventListener("click", function() {
+      window.location.href = "admin.html";
+  });
 
+  document.body.appendChild(adminButton);
+}
 
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -66,8 +83,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
   
-
+    document.getElementById("openChats").addEventListener("click", function(){
+      window.location.href = `chats.html?our_id=${user.id}`;
+    });
   
+    document.getElementById("openChannels").addEventListener("click", function(){
+      window.location.href = `all_channels.html?our_id=${user.id}`;
+    });
+
     assignedUserEl.textContent = user.name;
     
       fetch_channels(user.name);

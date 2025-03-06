@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Page</title>
+    <link rel="stylesheet" href="webstyle.css" />
+</head>
+<body>
+    <header>
+        <h2 class="Logo">Destroyers</h2>
+        <nav class="navigation">
+            <a href="all_channels.html">Back</a>
+        </nav>
+    </header>
+
+
+
+    <div class="body">
+        <h2>Channel</h2>
+        <p><strong>Name:</strong> <span id="channelName"></span></p>
+
+    
+        <h3>Messages</h3>
+        <div id="messagesContainer">
+            <!-- Сообщения будут отображаться здесь -->
+        </div>
+
+
+        <h3>Send a Message</h3>
+<form id="sendMessageForm">
+    <textarea id="messageContent" placeholder="Type your message..." required></textarea>
+    <button type="submit">Send</button>
+</form>
+
+
+    </div>
+
+    <script>
+
+
+document.getElementById("sendMessageForm").addEventListener("submit", async (e) => {
+    e.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
+
+    
+
+    const messageContent = document.getElementById("messageContent").value.trim();
+    if (!messageContent) return; // Если сообщение пустое, не отправляем
+
+    const urlParams = new URLSearchParams(window.location.search);
+            const channelName = urlParams.get("channelName");
+            const channelId= urlParams.get("channelId");
+            const our_id = urlParams.get("our_id");
+            
+            
+            
+
+    try {
+        const response = await fetch("http://localhost:3000/send-message", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: our_id,
+                channelId: channelId,
+                message: messageContent,
+                
+            }),
+        });
+
+        const data = await response.json();
+        console.log(data)
+        if (data.success) {
+            // После успешной отправки очищаем поле ввода и обновляем сообщения
+            document.getElementById("messageContent").value = "";
+            await fetchMessages(channelId); // Обновляем список сообщений
+        } else {
+            console.error("Failed to send message");
+        }
+    } catch (error) {
+        console.error("Error sending message:", error);
+    }
+});
+
+
+
+
+
+        async function fetchChannelDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const channelName = urlParams.get("channelName");
+            const channelId= urlParams.get("channelId");
+            const our_id = urlParams.get("our_id");
+            //const ourId = urlParams.get("our_id");
+            //console.log("Channelname: ", channelName, "Our ID is: ", ourId, "ChannelId", channelId);
+
+            document.getElementById("channelName").textContent = channelName;
+
+           await fetchMessages(channelId);
+       
+        }
+
+        //////////////////////////////////////////////////////////////////
+
+
+        async function fetchMessages(channelId) {
+    try {
+        const response = await fetch("http://localhost:3000/get-messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ channelId }),
+        });
+
+
+        const data = await response.json();
+        if (!data.messages) {
+            console.error("No messages found");
+            return;
+        }
+
+ 
+        console.log("Messages: ", data.messages);
+        const users = await fetchUsers();
+        const currentUser = JSON.parse(localStorage.getItem("user")); // Получаем текущего пользователя
+
+        const messagesContainer = document.getElementById("messagesContainer");
+        messagesContainer.innerHTML = "";
+
+        data.messages.forEach((msg) => {
+            const senderName = users[msg.senderId] || "Unknown User";
+            const messageElement = document.createElement("div");
+            messageElement.innerHTML = `
+                <strong>${senderName}:</strong> ${msg.content}
+                ${currentUser.role === "admin" ? `<button class="deleteButton" data-msg-id="${msg.id}">Delete</button>` : ""}
+            `;
+            messagesContainer.appendChild(messageElement);
+
+            // Добавляем обработчик для кнопки удаления
+            if (currentUser.role === "admin") {
+                const deleteButton = messageElement.querySelector(".deleteButton");
+                console.log("Delete button created for message:", msg.id);
+                deleteButton.addEventListener("click", () => deleteMessage(msg.id, channelId));
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching messages", error);
+    }
+}
+
+        // async function fetchMessages(channelId) {
+    
+        //     try{
+        //         const response = await fetch("http://localhost:3000/get-messages",{
+        //             method: "POST", 
+        //             headers: {"Content-Type": "application/json"},
+        //             body: JSON.stringify({channelId}),
+        //         });
+
+
+        //         const data = await response.json();
+        //         if(!data.messages){
+        //             console.error("NO messages found");
+        //             return;
+        //         }
+
+        //         console.log("Messages: ", data.messages);
+        //         const users = await fetchUsers();
+
+
+        //         const messagesContainer = document.getElementById("messagesContainer");
+        //         messagesContainer.innerHTML = "";
+
+
+        //         data.messages.forEach((msg) => {
+        //             const senderName = users[msg.senderId] || "Unknown User";
+        //             const messageElement = document.createElement("div");
+        //             messageElement.innerHTML = `<strong>${senderName}:</strong> ${msg.content}
+        //         ${currentUser.role === "admin" ? `<button class="deleteButton" data-msg-id="${msg.id}">Delete</button>` : ""}`;
+        //             messagesContainer.appendChild(messageElement);
+                    
+        //             // Добавляем обработчик для кнопки удаления
+        //     if (currentUser.role === "admin") {
+        //         const deleteButton = messageElement.querySelector(".deleteButton");
+        //         deleteButton.addEventListener("click", () => deleteMessage(msg.id, channelId));
+        //     }
+        //         });
+
+        //     }catch(error){
+        //             console.error("Error fetching messages", error);
+        //     }
+        // }
+
+
+        async function fetchUsers() {
+            try{
+                const response = await fetch("http://localhost:3000/all-users");
+                const data = await response.json();
+
+                if(data.users){
+                    console.log("Users:", data.users );
+                    return data.users.reduce((map, user)=>{
+                        map[user.id]= user.name;
+                        return map;
+                    }, {});
+                } else{
+                    console.error("failed to fetch users");
+                    return{};
+                }
+            }catch(error){
+                console.error("Error fetching users");
+                return{};
+            }
+        }
+
+
+        async function deleteMessage(messageId, channelId) {
+
+            console.log("mesid: ", messageId, " chanid: ", channelId);
+    try {
+        const response = await fetch("http://localhost:3000/remove-messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messageId, channelId }),
+        });
+        const data = await response.json();
+        if (data.success) {
+            console.log("Message deleted");
+            await fetchMessages(channelId); // Обновляем список сообщений
+        } else {
+            console.error("Failed to delete message");
+        }
+    } catch (error) {
+        console.error("Error deleting message:", error);
+    }
+}
+
+        fetchChannelDetails();
+
+        /////////////////////////////////////////////////////////////////
+
+
+    </script>
+</body>
+</html>
