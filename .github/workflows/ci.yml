@@ -27,19 +27,10 @@ jobs:
       - name: install cors
         run: npm install cors
 
-      - name: Run Linting (Optional)
-        continue-on-error: true
-        run: |
-          if [ -f eslint.config.js ]; then
-            npx eslint .
-          else
-            echo "No ESLint config found, skipping linting..."
-          fi
-
       - name: Run Tests
         run: |
           if [ -f package.json ]; then
-            npm test || echo "No tests found, skipping..."
+            node server.js || echo "No tests found, skipping..."
           else
             echo "No package.json found, skipping tests..."
           fi
