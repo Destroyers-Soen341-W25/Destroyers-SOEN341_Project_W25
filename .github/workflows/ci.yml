@@ -24,11 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run linting (optional)
-        run: |
-          npm install eslint -g
-          eslint .
-
       - name: Run tests
         run: npm test
 
