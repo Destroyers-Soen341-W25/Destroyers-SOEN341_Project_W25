@@ -14,8 +14,8 @@ import getAllUsers from './getAllUsers.js';
 import getchannel from './getchannel.js';
 import removefromChannel from './remove-user-from-channel.js';
 import getuserschannel from './getAllUserChannel.js';
-
-
+import sendmessages from './messages.js';
+import getmessages from './getmessages.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -103,9 +103,6 @@ app.post('/create-channel', async (req, res) => {
 app.post('/remove-channel',async (req,res) => {
     const {channelId}=req.body;
     try {
-
-
-
         await removeChannel(channelId);
         res.status(200).json({ message: 'Channel removed successfully' });
     } catch (error) {
@@ -190,6 +187,58 @@ app.post('/deassign-user', async (req, res) => {
     }
 });
 
+//Send message
+app.post('/send-message', async (req, res) => {
+    const {channelId, message, userId} = req.body;
+    try {
+        await sendmessages(userId, channelId, message);
+        res.status(201).json();
+    } catch (error) {
+        res.status(500).json({ message: 'Error sending message', error });
+    }
+});
+
+//Get messages
+app.post('/get-messages', async (req, res) => {
+    const { channelId } = req.body;
+    try {
+        const messages = await getmessages(channelId);
+        res.status(200).json({ messages });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching messages', error });
+    }
+});
+
+//remove messages from channel
+app.post('/remove-messages', async (req, res) => {
+    const { channelId, messageIds } = req.body;
+    try {
+        await removeMessages(channelId, messageIds);
+        res.status(200).json({ message: 'Messages removed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error removing messages', error });
+    }
+});
+//send a DM
+app.post('/send-dm', async (req, res) => {
+    const { recipientId, senderId, message } = req.body;
+    try {
+        await sendDM(senderId, message,recipientId);
+        res.status(201).json();
+    } catch (error) {
+        res.status(500).json({ message: 'Error sending DM', error });
+    }
+});
+//get all DM
+app.post('/get-dms', async (req, res) => {
+    const { userId } = req.body;
+    try {
+        const dms = await getDMs(userId);
+        res.status(200).json({ dms });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching DMs', error });
+    }
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
