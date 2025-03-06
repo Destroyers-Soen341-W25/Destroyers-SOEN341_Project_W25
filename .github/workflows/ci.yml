@@ -37,4 +37,6 @@ jobs:
 
       - name: Start Server (Basic Verification)
         run: |
-          node server.js
+          nohup npm start &
+          sleep 5
+          curl -I http://localhost:3000 || exit 1
