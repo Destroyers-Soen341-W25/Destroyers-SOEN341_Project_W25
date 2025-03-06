@@ -24,6 +24,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: install cors
+        run: npm install cors
+
       - name: Run Linting (Optional)
         continue-on-error: true
         run: |
