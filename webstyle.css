@@ -9,9 +9,8 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url("https://cdn.discordapp.com/attachments/1332445231236255826/1336086682226655323/17386182758812072494246873805268.png?ex=67a3d8b0&is=67a28730&hm=52773d9d5feb622b0a767e1e44cdca850768f054c22ea20d1b691bde911f5af5&")  no-repeat;
     background-size: auto;
-    background-position: center;
+    background: url("destroyers_logo.png") no-repeat center;
 }
 header{
     position: fixed;

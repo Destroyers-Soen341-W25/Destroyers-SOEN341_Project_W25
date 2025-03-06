@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Destroyers - Communicate with everyone</title>
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1332445231236255826/1336086682226655323/17386182758812072494246873805268.png?ex=67a3d8b0&is=67a28730&hm=52773d9d5feb622b0a767e1e44cdca850768f054c22ea20d1b691bde911f5af5&" type="image/x-icon">
+    <link rel="icon" href="destroyers_logo.png" type="image/x-icon">
     <link rel="stylesheet" href="webstyle.css">
     <script src="https://kit.fontawesome.com/520837db65.js" crossorigin="anonymous"></script>
 </head>
@@ -27,9 +27,9 @@
     </span>
     <div class="form-box-login">
         <h2>Login</h2>
-        <form action="#">
+        <form action="#" id="login-form">
             <div class="input-field">
-                <span class="fa-solid fa-envelope"></span>
+                <span class="fa-solid fa-user"></span>
                 <label>
                     <input type="text" placeholder="Username" required>
                 </label>
@@ -37,7 +37,7 @@
             <div class="input-field">
                 <span class="fa-solid fa-lock"></span>
                 <label>
-                    <input type="password" placeholder="Password" required>
+                    <input type="text" id="loginPassword" placeholder="Password" required>
                 </label>
             </div>
             <div class="remember-forgot">
@@ -55,23 +55,23 @@
 
     <div class="form-box-register">
         <h2>Registration</h2>
-        <form action="#">
+        <form action="#" id="register-form">
             <div class="input-field">
                 <span class="fa-solid fa-user"></span>
                 <label>
-                    <input type="text" placeholder="Username" required>
+                    <input type="text" id="registerUsername" placeholder="Username" required>
                 </label>
             </div>
             <div class="input-field">
                 <span class="fa-solid fa-envelope"></span>
                 <label>
-                    <input type="email" placeholder="Email" required>
+                    <input type="text" id= "email" placeholder="Email" required>
                 </label>
             </div>
             <div class="input-field">
                 <span class="fa-solid fa-lock"></span>
                 <label>
-                    <input type="password" placeholder="Password" required>
+                    <input type="text" id="registerPassword" placeholder="Password" required>
                 </label>
             </div>
             <div class="remember-forgot">
@@ -83,7 +83,6 @@
                 <label>
                     <input type="checkbox"> I agree to the terms & conditions
                 </label>
-
             </div>
             <button type="submit" class="login-button">Register</button>
             <div class="login-register">
