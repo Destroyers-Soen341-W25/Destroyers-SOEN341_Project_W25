@@ -1,0 +1,21 @@
+Meeting #8
+Date: 2025-03-19
+Location: Online on Discord Chat
+Attendees: All team members
+
+Discussion Points:
+Review of Sprint 3 objectives and assigned tasks.
+Planning the implementation of Text Channels Enhancements and User Presence & Status features.
+Assigning tasks for:
+Creating default and private channels.
+Implementing join/leave channel functionality.
+Displaying user presence indicators (online, offline, away).
+Showing "last seen" timestamps.
+Writing acceptance tests for new features.
+Ensuring that Sprint 1-2 unit tests run in the CI pipeline.
+
+Action Items:
+Team members start implementing their assigned tasks.
+Write and label acceptance tests in GitHub.
+Ensure Sprint 1-2 unit tests are integrated into the CI pipeline.
+Upload meeting minutes to GitHub.
