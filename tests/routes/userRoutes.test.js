@@ -1,5 +1,6 @@
-import request from 'supertest';
-import app from '../server.js';
+const request = require('supertest');
+const app = require('../server.js');
+
 
 describe('User Routes Tests', () => {
     test('Register a new user', async () => {
