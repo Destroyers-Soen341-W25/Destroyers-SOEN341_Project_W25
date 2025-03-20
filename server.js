@@ -24,6 +24,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+export default app;
+
 // User Registration
 app.post('/register', async (req, res) => {
     const { name, password, role } = req.body;
