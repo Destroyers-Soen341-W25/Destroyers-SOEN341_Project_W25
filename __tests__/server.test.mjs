@@ -1,5 +1,17 @@
 import request from 'supertest';
-import app from '../server.js'; // ✅ Import app (no need for index.js)
+import app from '../server.js';
+
+let server;
+
+beforeAll(() => {
+  // Start a test server before running tests
+  server = app.listen(4000);
+});
+
+afterAll((done) => {
+  // Close the server after all tests are done
+  server.close(done);
+});
 
 describe('Server Tests', () => {
   it('should respond to GET /all-users', async () => {
