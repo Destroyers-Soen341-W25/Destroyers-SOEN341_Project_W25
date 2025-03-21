@@ -1,15 +1,22 @@
 import db from './Database-conf.js';
 
 async function getchannel(channelId) {
-    try{
-    const channel = await db.collection('channels').doc(channelId).get();
+    try {
+        if (!channelId || typeof channelId !== "string") {
+            throw new Error("Invalid channel ID: must be a non-empty string");
+        }
 
-    if (channel) {
-         return channel.data();
+        const channel = await db.collection('channels').doc(channelId).get();
+
+        if (!channel.exists) {
+            throw new Error(`Channel with ID '${channelId}' not found.`);
+        }
+
+        return channel.data();
+    } catch (error) {
+        console.error("Error fetching channel:", error);
+        return null; // Return null instead of crashing the program
     }
-} catch (error) {
-        console.error("Error adding user:", error);
 }
-}
+
 export default getchannel;
-console.log(await getchannel());
