@@ -1,15 +1,11 @@
 import React from 'react';
 
-
-//ChatBox file
-
-
-const Chat = () => {
+const GeneralChannelsView = () => {
     return (
         <div>
-            Chat
+
         </div>
     );
 };
 
-export default Chat;
+export default GeneralChannelsView;

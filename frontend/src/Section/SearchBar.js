@@ -1,97 +1,150 @@
-import React from 'react';
-import {Box, Button, Input, MenuButton, Text, useDisclosure, HStack, createToaster, Spinner} from "@chakra-ui/react";
-import {Tooltip} from "../components/ui/tooltip";
-import {MenuRoot} from "../components/ui/menu";
-import { FaRegBell } from "react-icons/fa";
-import {ChatState} from "../Context/ChatProvider";
-import {useNavigate} from "react-router-dom";
-import axios from "axios";
+// import React from 'react';
+//
+// const SearchBar = () => {
+//     return (
+//         <div>
+//             Search Bar
+//         </div>
+//     );
+// };
+//
+// export default SearchBar;
 
-// import {menu} from "../components/ui/menu";
+import React, { useState, useEffect } from "react";
+import { Button, Input, HStack, Box, Spinner } from "@chakra-ui/react";
+import { ChatState } from "../Context/ChatProvider";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+//import { toast } from "sonner";
+import ChatLoading from "../Divers/ChatLoading";
+import {toaster} from "../components/ui/toaster";
 
 const SearchBar = () => {
-    const [search, setSearch] = React.useState('');
-    const [searchResults, setSearchResults] = React.useState('');
-    const [loading, setLoading] = React.useState(false);
-    const [loadingChat, setLoadingChat] = React.useState(false);
-    const toaster = createToaster();
+    const [search, setSearch] = useState('');//When searching the user
+    const [searchResults, setSearchResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [loadingChat, setLoadingChat] = useState(false);//Loading chats
+    const [allUsers, setAllUsers] = useState([]);
 
-    const {user}= ChatState();
+    const { user, setSelectedChat, chats, setChats } = ChatState();
     const navigate = useNavigate();
 
-    const handleSearch = async (e) => {
+    // Fetch all users on
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const config = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user?.token}`,
+                    },
+                    withCredentials: true
+                };
+                const { data } = await axios.get('/all-users', config);
+                console.log("Fetched Users: ", data.users);
+                setAllUsers(data.users);
+            } catch (error) {
+                toaster.error({title: "Failed to fetch users"});
+
+            }
+        };
+
+        fetchUsers();
+    }, [user]);
+
+    // Filter users as the user types
+    useEffect(() => {
         if (!search) {
-            toaster.create({title: "Please enter something in the search",
-                            status: "warning",
-                            duration: 5000,
-                            isClosable: true,
-                            position: "top-left"
-            });
-            return;
+            setSearchResults([]);
+        } else {
+            const filteredUsers = allUsers.filter((u) =>
+                u.name.toLowerCase().includes(search.toLowerCase())
+            );
+            setSearchResults(filteredUsers);
         }
-        try{
-            setLoading(true);
+    }, [search, allUsers]);
+
+    //Fetch chats
+    const fetchChat = async (userId) => {
+        try {
+            setLoadingChat(true);
             const config = {
                 headers: {
+                    "Content-Type": "application/json",
                     Authorization: `Bearer ${user?.token}`,
                 },
             };
-            const {data} = await axios.get(`/api/user?search=${search}=${user?.token}`, config);
-            setLoading(false);
-            setSearchResults(data);
-        }catch (error){
-            toaster.create({title: "Please enter something in the search",
-                status: "warning",
-                duration: 5000,
-                isClosable: true,
-                position: "top-left"
-            });
+            const { data } = await axios.post('/get-dms', { userId }, config);
+            if (!userId) {
+                console.error("Error: userID is missing");
+                return;
+            }
+            if (!chats.find((c) => c.id === data.id)) setChats([data, ...chats]);//Adding chats that are not already there to not have duplicates
+
+            setSelectedChat(data);
+            setLoadingChat(false);
+            // onClose();
+        } catch (error) {
+            toaster.error({title:"Failed to fetch the chat"});
         }
     };
 
-    const accessChat=(user)
-
-
     return (
-        // <Box>
-            <HStack spacing={2}>
-                <Input placeholder="Search..." onChange={(e) => setSearch(e.target.value)} value={search}/>
-                <Button onClick={handleSearch}>Go</Button>
-                {loading ? <Spinner /> : null}
+        <Box position="relative" width="400px">
+            <HStack spacing={2} width="100%">
+                <Input
+                    placeholder="Search..."
+                    width="100%"
+                    size="md"
+                    onChange={(e) => setSearch(e.target.value)}
+                    value={search}
+                />
+                {/*<Button size="md" variant="subtle" onClick={() => setSearch("")}>*/}
+                {/*    Clear*/}
+                {/*</Button>*/}
             </HStack>
-        // </Box>
 
-
-
-    //     <Box display="flex"
-    //          justifyContent="space-between"
-    //          alignItems="center"
-    //     bg="white"
-    //     width="100%"
-    //     padding="5px 10px 5px 10px"
-    //     borderWidth="5px">
-    //         <Tooltip label = "Search User" hasArrow placement="bottom-end">
-    //             <Button variant={""}>
-    //                 <i className="fa-solid fa-magnifying-glass"></i>
-    //                 <Text textStyle="md"
-    //                 display="flex"
-    //                 padding="4px">
-    //                     Search User
-    //                 </Text>
-    //             </Button>
-    //         </Tooltip>
-    //         <Text fontSize="lg"
-    //               fontWeight="bold"
-    //               padding="4px">
-    //             Destroyers
-    //         </Text>
-    //         <div>
-    //             <MenuRoot>
-    //                 <FaRegBell fontSize="3x1" />
-    //             </MenuRoot>
-    //         </div>
-    //     </Box>
-     );
+            {/* Dropdown for search results */}
+            {search && (
+                <Box
+                    position="absolute"
+                    width="100%"
+                    bg="white"
+                    boxShadow="md"
+                    borderRadius="md"
+                    overflow="hidden"
+                    zIndex="10"
+                    maxHeight="30vh"
+                    overflowY="auto"
+                >
+                    {loading ? (
+                        <Box p={3} textAlign="center">
+                            <Spinner size="sm" />
+                        </Box>
+                    ) : searchResults.length > 0 ? (
+                        searchResults.map((user) => (
+                            <Box
+                                key={user.id}
+                                p={3}
+                                _hover={{ bg: "gray.100" }}
+                                cursor="pointer"
+                                onClick={() => fetchChat(user.id)}
+                            >
+                                {user.name}
+                            </Box>
+                        ))
+                    ) : (
+                        <Box p={3} textAlign="center" color="gray.500">
+                            No results found
+                        </Box>
+                    )}
+                </Box>
+            )}
+        </Box>
+    );
 };
 
 export default SearchBar;
+//
+//
+// //loadingChat && <Spinner ml={"auto"} display={"flex"}/>}
