@@ -19,6 +19,7 @@ import getmessages from './getmessages.js';
 import getchat from './getchat.js';
 import SendDM from './sendDM.js';
 import Sendmessage from './messages.js';
+import { WebSocketServer } from 'ws';
 
 const app = express();
 app.use(bodyParser.json());
@@ -187,8 +188,10 @@ app.post('/deassign-user', async (req, res) => {
     try {
         const updatedChannel = await removefromChannel(userId, channelId);
         res.status(200).json({ message: 'User removed from channel', updatedChannel });
+        console.log("User successfully removed: ");
     } catch (error) {
         res.status(500).json({ message: 'Error removing user', error });
+        console.log("Error removing user: "+error);
     }
 });
 
@@ -253,8 +256,53 @@ app.post('/get-dms', async (req, res) => {
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+// Создаём WebSocket сервер поверх HTTP сервера
+const wss = new WebSocketServer({ noServer: true });
+
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+    });
+});
+
+// Храним статусы пользователей
+const users = new Map();
+
+wss.on('connection', (ws, req) => {
+    console.log('New WebSocket connection');
+
+    ws.on('message', (data) => {
+        const message = JSON.parse(data);
+
+        if (message.type === 'status') {
+            users.set(message.userId, ws);  // Сохраняем сокет вместо строки "online"
+            broadcastStatus();
+        }
+    });
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+        users.forEach((socket, userId) => {
+            if (socket === ws) {
+                users.delete(userId);
+            }
+        });
+        broadcastStatus();
+    });
+});
+
+// Функция отправки статусов всем клиентам
+function broadcastStatus() {
+    const statusList = Array.from(users.keys()).map(userId => ({ userId, status: "online" }));
+    wss.clients.forEach(client => {
+        if (client.readyState === 1) {
+            client.send(JSON.stringify({ type: 'updateStatus', users: statusList }));
+        }
+    });
+}
 
 app.use(cors());

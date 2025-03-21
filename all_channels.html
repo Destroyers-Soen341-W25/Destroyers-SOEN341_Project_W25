@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,50 +9,94 @@
     <link rel="stylesheet" href="webstyle.css" />
 </head>
 <body>
-    <header>
-        <h2 class="Logo">Destroyers</h2>
-        <nav class="navigation">
-            <a href="channel.html">Back</a>
-        </nav>
-    </header>
+<header>
+    <h2 class="Logo">Destroyers</h2>
+    <nav class="navigation">
+        <a href="channel.html">Back</a>
+    </nav>
+</header>
 
-    <div class="body">
-        <h2>All Channels</h2>
-        <ul id="channelsList"></ul>
-    </div>
+<div class="body">
+    <h2>All Channels</h2>
+    <ul id="channelsList"></ul>
+</div>
 
-    <script>
-        async function fetchUsersChannels() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const our_id = urlParams.get("our_id");
-            console.log("OUR ID IS: ", our_id);
-            try {
-                const response = await fetch("http://localhost:3000/get-user-channels", {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ current_user_id: our_id })
+<script>
+    async function fetchUsersChannels() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const our_id = urlParams.get("our_id");
+        console.log("OUR ID IS: ", our_id);
+        try {
+            const response = await fetch("http://localhost:3000/get-user-channels", {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ current_user_id: our_id })
+            });
+
+            const data = await response.json();
+            console.log("Channels are: ", data);
+            const channelsList = document.getElementById("channelsList");
+
+            data.channels.forEach(channel => {
+                const li = document.createElement("li");
+                li.textContent = channel.channelname;  // Показываем имя канала
+
+                // Кнопка "Leave"
+                const leaveButton = document.createElement("button");
+                leaveButton.textContent = "Leave";
+                            leaveButton.addEventListener("click", (event) => {
+                event.stopPropagation();  // Останавливаем дальнейшее распространение события
+                leaveChannel(channel.id, our_id);
+            });
+
+                // Добавляем кнопку в элемент списка
+                li.appendChild(leaveButton);
+
+                // Добавляем обработчик для перехода на страницу канала
+                li.addEventListener("click", () => {
+                    window.location.href = `channelPage.html?channelName=${channel.channelname}&our_id=${our_id}&channelId=${channel.id}`;
                 });
- 
-                const data = await response.json();
-                console.log("Channels are: ", data);
-                const channelsList = document.getElementById("channelsList");
 
+                channelsList.appendChild(li);
+            });
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    }
 
-                data.channels.forEach(channel => {
-                    const li = document.createElement("li");
-                    li.textContent = channel.channelname;  // Показываем имя пользователя
-                    li.addEventListener("click", () => {
-                    window.location.href = `channelPage.html?channelName=${channel.channelname}&our_id=${our_id}&channelId=${channel.id}`;    
-                    });
+    // Функция для покидания канала
+   async function leaveChannel(channelId, userId) {
+    try {
+        const response = await fetch("http://localhost:3000/deassign-user", {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ channelId, userId })
+        });
 
-                    channelsList.appendChild(li);
-                });
-            } catch (error) {
-                console.error("Error fetching users:", error);
-            }
+        // Проверка статуса ответа
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        fetchUsersChannels();
-    </script>
+        const result = await response.json();
+        console.log("Server response:", result);
+
+        // Проверка сообщения
+        if (result.message === 'User removed from channel') {
+            alert('You have left the channel');
+            // Обновляем список каналов
+            document.getElementById("channelsList").innerHTML = '';  // Очистка списка
+            fetchUsersChannels();  // Повторный запрос для обновления
+        } else {
+            alert('Error leaving the channel');
+        }
+    } catch (error) {
+        console.error("Error leaving channel:", error);
+        alert('Error leaving the channel');
+    }
+}
+
+    fetchUsersChannels();
+</script>
 </body>
 </html>

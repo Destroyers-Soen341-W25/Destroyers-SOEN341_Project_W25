@@ -8,47 +8,82 @@
     <link rel="stylesheet" href="webstyle.css" />
 </head>
 <body>
-    <header>
-        <h2 class="Logo">Destroyers</h2>
-        <nav class="navigation">
-            <a href="channel.html">Back</a>
-        </nav>
-    </header>
+<header>
+    <h2 class="Logo">Destroyers</h2>
+    <nav class="navigation">
+        <a href="channel.html">Back</a>
+    </nav>
+</header>
 
-    <div class="body">
-        <h2>All Users</h2>
-        <ul id="userList"></ul>
-    </div>
+<div class="body">
+    <h2>All Users</h2>
+    <ul id="userList"></ul>
+</div>
 
-    <script>
-        async function fetchUsers() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const our_id = urlParams.get("our_id");
-            try {
-                const response = await fetch("http://localhost:3000/all-users", {
-                    method: 'GET'
+<script>
+    const userList = document.getElementById("userList");
+    const userStatusMap = {}; // Храним статусы пользователей
+
+    async function fetchUsers() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const our_id = urlParams.get("our_id");
+
+        try {
+            const response = await fetch("http://localhost:3000/all-users");
+            const data = await response.json();
+
+            data.users.forEach(user => {
+                const li = document.createElement("li");
+                li.setAttribute("data-user-id", user.id);
+                li.innerHTML = `${user.name} <span class="status">Offline</span>`; // Статус по умолчанию
+
+                li.addEventListener("click", () => {
+                    window.location.href = `individualChat.html?username=${user.name}&our_id=${our_id}&userId=${user.id}`;
                 });
- 
-                const data = await response.json();
 
-                const userList = document.getElementById("userList");
+                userList.appendChild(li);
+                userStatusMap[user.id] = "Offline"; // По умолчанию
+            });
 
-
-                data.users.forEach(user => {
-                    const li = document.createElement("li");
-                    li.textContent = user.name;  // Показываем имя пользователя
-                    li.addEventListener("click", () => {
-                    window.location.href = `individualChat.html?username=${user.name}&our_id=${our_id}&userId=${user.id}`;    
-                    });
-
-                    userList.appendChild(li);
-                });
-            } catch (error) {
-                console.error("Error fetching users:", error);
-            }
+        } catch (error) {
+            console.error("Error fetching users:", error);
         }
+    }
 
-        fetchUsers();
-    </script>
+    // Подключаемся к WebSocket-серверу
+    const ws = new WebSocket("ws://localhost:3000");
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "updateStatus") {
+            data.users.forEach(user => {
+                userStatusMap[user.userId] = user.status;
+            });
+
+            updateUserStatuses();
+        }
+    };
+
+    function updateUserStatuses() {
+        document.querySelectorAll("#userList li").forEach(li => {
+            const userId = li.getAttribute("data-user-id");
+            const statusElement = li.querySelector(".status");
+
+            if (statusElement && userStatusMap[userId]) {
+                statusElement.textContent = userStatusMap[userId];
+                statusElement.style.color = getStatusColor(userStatusMap[userId]);
+            }
+        });
+    }
+
+    function getStatusColor(status) {
+        if (status === "Online") return "green";
+        if (status === "Away") return "orange";
+        return "gray"; // Offline
+    }
+
+    fetchUsers();
+</script>
 </body>
 </html>
