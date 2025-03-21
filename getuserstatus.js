@@ -25,4 +25,4 @@ async function getstatus(userId) {
 
 export default getstatus;
 
-console.log(await getstatus('84Jk1xiJIBRMeEf7A92D'));
+//console.log(await getstatus('84Jk1xiJIBRMeEf7A92D'));

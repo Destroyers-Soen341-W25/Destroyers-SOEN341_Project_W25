@@ -18,6 +18,8 @@ import Sendmessage from './messages.js';
 import getmessages from './getmessages.js';
 import SendDM from "./sendDM.js";
 import getchat from './getchat.js';
+import getstatus from './getuserstatus.js';
+import setstatus from './setuserstatus.js';
 
 
 const app = express();
@@ -249,10 +251,38 @@ app.post('/get-dms', async (req, res) => {
     }
 });
 
+//get user status
+app.post('/get-user-status', async(req,res)=>{
+
+    console.log("Recieved request");
+    const { userId } = req.body;
+    try{
+    const userdata = await getstatus(userId);
+
+    res.status(200).json({userdata});
+    }
+    catch(error){
+    res.status(500).json({message:'Error fetching status for the user'})};
+    });
+
+    app.post('/set-user-status', async(req,res)=>{
+    const {userId, status} = req.body;
+    try{
+        await setstatus(userId, status);
+        res.status(200).json({message: 'status was successfully updated'});
+    } catch(error){
+        res.status(500).json({ message: 'Error setting user status', error});
+    }
+    });
+
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+
 
 // app.use(cors());
 

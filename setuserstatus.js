@@ -8,7 +8,7 @@ async function setstatus(userId,status) {
         };
 
         await db.collection('users').doc(userId).collection('status').doc('current status').set(userstatus, { merge: true });
-        console.log('Current user status:', userstatus.id);
+//        console.log('Current user status:', userstatus.id);
         return { statusId: userstatus.id };
 
     } catch (error) {
