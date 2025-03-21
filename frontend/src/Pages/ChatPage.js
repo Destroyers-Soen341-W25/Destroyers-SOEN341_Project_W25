@@ -1,5 +1,7 @@
 
 import React from 'react';
+// import "./Page/ChatPage.css";
+import "./ChatPage.css";
 import {Box} from "@chakra-ui/react";
 import SearchBar from "../Section/SearchBar";
 import ChatHistory from "../Section/ChatHistory";
@@ -7,7 +9,8 @@ import Chat from "../Section/Chat";
 
 const ChatPage = () => {
     return (
-        <div style={{width:'100%'}}>
+        <div className="chat-page">
+
             {<SearchBar/>}
             <Box
             display="flex"
