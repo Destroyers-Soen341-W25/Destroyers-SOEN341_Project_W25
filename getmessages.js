@@ -5,7 +5,13 @@ async function getmessages(channelId) {
         const messages = await db.collection('channels').doc(channelId).collection('messages').get();
 
         if (!messages.empty) {
-            return messages.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            return messages.docs.map(doc => {
+                const messageData = doc.data();
+                if (messageData.timestamp) {
+                    messageData.timestamp = messageData.timestamp.toDate(); 
+                }
+                return { id: doc.id, ...messageData };
+            });
         } else {
             console.log("No messages found");
             return [];
