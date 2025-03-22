@@ -71,7 +71,7 @@ app.post('/login', async (req, res) => {
 //Get all users
 app.get('/all-users', async (req, res) => {
     try {
-        console.log("trying to fetch all users");
+        console.log("Trying to fetch all users");
         const users = await getAllUsers();
         console.log("Users are: ", users);
         res.status(200).json({ users });
@@ -150,6 +150,7 @@ app.get('/all-channels', async (req, res) => {
     try {
         console.log("TRYING ALL CHANELS");
         const channels = await getAllChannels();
+        console.log("Channels are: ", channels);
         res.status(200).json({ channels });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching channels', error });
@@ -262,7 +263,7 @@ app.post('/get-user-status', async(req,res)=>{
     res.status(200).json({userdata});
     }
     catch(error){
-    res.status(500).json({message:'Error fetching status for the user'})};
+    res.status(500).json({message:'Error fetching status for the user'})}
     });
 
     app.post('/set-user-status', async(req,res)=>{

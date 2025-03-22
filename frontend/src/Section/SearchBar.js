@@ -75,6 +75,10 @@ const SearchBar = () => {
                 },
             };
             const { data } = await axios.post('/get-dms', { userId }, config);
+            toaster.create({
+                description:`${data}`,
+                type: "info"
+            });
             if (!userId) {
                 console.error("Error: userID is missing");
                 return;
@@ -85,7 +89,8 @@ const SearchBar = () => {
             setLoadingChat(false);
             // onClose();
         } catch (error) {
-            toaster.error({title:"Failed to fetch the chat"});
+            toaster.error({title:"Failed to fetch the chat "+error});
+            console.log("Failed the operation");
         }
     };
 
