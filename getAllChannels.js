@@ -7,7 +7,7 @@ export default async function getuserschannel(userId){
             id: doc.id, ...doc.data()
         }));
         const userchannels = channels.filter(channel => channel.userIds.includes(userId));
-        return userchannels;
+        return channels;
     }catch(error){
         console.error("Error fetching channels:", error);
         throw error;
