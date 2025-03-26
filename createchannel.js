@@ -4,8 +4,8 @@ import db from './Database-conf.js';
 async function createchannel(channelName, channelType) {
 
     const channel={
-        channelname:channelName;
-        channeltype:channelType;
+        channelname:channelName,
+        channeltype:channelType
     }
     
     try{
