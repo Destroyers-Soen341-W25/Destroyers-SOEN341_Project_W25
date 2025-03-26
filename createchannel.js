@@ -6,7 +6,7 @@ async function createchannel(channelName, channelType) {
     const channel={
         channelname:channelName;
         channeltype:channelType;
-    };
+    }
     
     try{
     const result = await db.collection('channels').add(channel);
