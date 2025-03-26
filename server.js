@@ -145,17 +145,29 @@ app.post('/get-user-channels', async(req, res)=>{
     }
 })
 
-//Get all channels
+// //Get all channels
+// app.get('/all-channels', async (req, res) => {
+//     try {
+//         console.log("TRYING ALL CHANELS");
+//         const channels = await getAllChannels();
+//         console.log("Channels are: ", channels);
+//         res.status(200).json({ channels });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error fetching channels', error });
+//     }
+// });
 app.get('/all-channels', async (req, res) => {
     try {
-        console.log("TRYING ALL CHANELS");
+        console.log("Trying all channels");
         const channels = await getAllChannels();
         console.log("Channels are: ", channels);
         res.status(200).json({ channels });
     } catch (error) {
+        console.error("Error fetching channels:", error);
         res.status(500).json({ message: 'Error fetching channels', error });
     }
 });
+
 
 //Change roles
 app.post('/change-role', async (req, res) => {
