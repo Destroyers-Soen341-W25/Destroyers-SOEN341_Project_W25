@@ -1,48 +1,38 @@
-name: Node.js CI Pipeline
+name: Node.js CI
 
 on:
   push:
     branches:
-      - newBatyr
+      - main
   pull_request:
     branches:
-      - newBatyr
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v2
 
-      - name: Set Up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "16" # Use the version that your project requires (e.g., 16 or 18)
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
 
-      - name: Install ws (WebSocket package)
-        run: npm install ws
+      - name: Lint code
+        run: npm run lint # Make sure you have a linting script in package.json
 
-      - name: Install cors
-        run: npm install cors
+      - name: Run tests
+        run: npm test # Assumes you have a test script defined in package.json
 
-      - name: Run Tests
-        run: |
-          if [ -f package.json ]; then
-            npm test || echo "No tests found, skipping..."
-          else
-            echo "No package.json found, skipping tests..."
-          fi
+      - name: Build application (optional)
+        run: npm run build # Only run if you have a build script for production
 
-      - name: Start Server (Basic Verification)
-        run: |
-          nohup npm start &
-          sleep 5
-          curl -I http://localhost:3000 || exit 1
-
-      - name: Run Unit Tests
-        run: npm test
+      - name: Deploy application (optional)
+        run: npm run deploy # If you have a deployment script defined
+        if: github.ref == 'refs/heads/main' # Only deploy when pushing to main branch
