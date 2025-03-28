@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server.js",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest --forceExit"
-    
   },
   "author": "",
   "license": "ISC",
@@ -14,9 +13,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "firebase-admin": "^13.1.0"
+    "firebase-admin": "^13.1.0",
+    "ws": "^8.18.1"
   },
-  
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
