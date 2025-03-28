@@ -91,19 +91,37 @@ app.post('/get-user', async (req, res) => {
 
 //createchannel
 // Изменённый роут /create-channel в server.js:
+// app.post('/create-channel', async (req, res) => {
+//     const { channelName, channelType } = req.body; // Извлекаем оба поля
+//     if (!channelName) {
+//       return res.status(400).json({ message: 'Missing required fields' });
+//     }
+//     try {
+//       console.log("Creating a channel...");
+//       const channel = await createchannel(channelName, channelType);
+//       res.status(201).json({ message: 'Channel created successfully', channel });
+//     } catch (error) {
+//       res.status(500).json({ message: 'Error creating channel', error });
+//     }
+//   });
 app.post('/create-channel', async (req, res) => {
-    const { channelName, channelType } = req.body; // Извлекаем оба поля
-    if (!channelName) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
     try {
-      console.log("Creating a channel...");
-      const channel = await createchannel(channelName, channelType);
-      res.status(201).json({ message: 'Channel created successfully', channel });
+      const { channelName } = req.body;
+  
+      if (!channelName) {
+        return res.status(400).json({ message: 'Channel name is required' });
+      }
+  
+      // Assuming you are using a model to interact with the database
+      const newChannel = await ChannelModel.create({ name: channelName });
+  
+      return res.status(201).json(newChannel);
     } catch (error) {
-      res.status(500).json({ message: 'Error creating channel', error });
+      console.error('Error creating channel:', error); // Log the error
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
   });
+  
 
 
 
