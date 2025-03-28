@@ -95,7 +95,10 @@ function addAdminButton() {
     
       fetch_channels(user.name);
 
-  
+  // channel.js (добавьте в конце файла)
+document.getElementById("createChannel").addEventListener("click", function(){
+  window.location.href = "create_channel.html";
+});
 
 
 
