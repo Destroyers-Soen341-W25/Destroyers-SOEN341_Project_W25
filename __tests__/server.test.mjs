@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../server.js'; 
 import { jest } from '@jest/globals';
-import * as assignUserToChannelModule from '../assign_user-channel.js';  // Import the whole module to access the default export
+import * as assignUserToChannelModule from '../assign_user-channel.js';
 
 
 describe('API Unit Tests', () => {
@@ -82,31 +82,26 @@ describe('API Unit Tests', () => {
     expect(res.status).toBe(200);
 });
 
-// assign user to channel tests
-test('Assign User to Channel - Success', async () => {
-  const userId = 'user123';  // Example user ID
-  const channelId = 'channel123';  // Example channel ID
-
-  // First, make sure the user and channel exist in the database
-  // (You might need to create a user and a channel if they're not created yet)
+  // assign user to channel tests
+  test('Assign User to Channel - Success', async () => {
+  const userId = 'user123';  
+  const channelId = 'hello world'; 
 
   const res = await request(app)
     .post('/assign-user')
     .send({ userId, channelId });
 
-  // Check if the response status is 200 (OK)
   expect(res.status).toBe(200);
   expect(res.body.message).toBe('User assigned to channel');
 
-  // Optionally check that the user is now part of the channel
   expect(res.body.updatedChannel.userIds).toContain(userId);
   expect(res.body.updatedChannel.channelId).toBe(channelId);
 });
 
   // remove user from channel tests
   test('Remove User from Channel - Success', async () => {
-    const userId = 'user123';  // Example user ID
-    const channelId = 'channel123';  // Example channel ID
+    const userId = 'user123';  
+    const channelId = 'channel123'; 
 
     // Send the request to remove user from the channel
     const res = await request(app)
@@ -117,7 +112,6 @@ test('Assign User to Channel - Success', async () => {
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('User removed from channel');
 
-    // Optionally check that the user is no longer part of the channel
     expect(res.body.updatedChannel.userIds).not.toContain(userId);
     expect(res.body.updatedChannel.channelId).toBe(channelId);
   });
@@ -140,8 +134,8 @@ test('Assign User to Channel - Success', async () => {
 
     // remove messages from channel tests
     test('Remove Messages from Channel - Success', async () => {
-      const channelId = 'channel123';  // Example channel ID
-      const messageIds = ['message1', 'message2'];  // Example message IDs to remove
+      const channelId = 'channel123';  
+      const messageIds = ['message1', 'message2']; 
   
       // Send the request to remove messages from the channel
       const res = await request(app)
@@ -152,8 +146,6 @@ test('Assign User to Channel - Success', async () => {
       expect(res.status).toBe(200);
       expect(res.body.message).toBe('Messages removed successfully');
   
-      // Optionally, check if the messages are actually removed
-      // (If the API returns the updated channel or messages list, you can add assertions here)
     });
 
     // Direct Messaging Tests
