@@ -4,7 +4,6 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint .",
     "start": "node server.js",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest --forceExit"
   },
