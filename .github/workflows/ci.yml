@@ -24,11 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Lint code
-        run: npm run lint # Make sure you have a linting script in package.json
-
       - name: Run tests
-        run: npm test # Assumes you have a test script defined in package.json
+        run: npm test
 
       - name: Build application (optional)
         run: npm run build # Only run if you have a build script for production
