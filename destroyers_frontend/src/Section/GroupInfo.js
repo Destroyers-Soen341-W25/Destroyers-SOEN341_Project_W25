@@ -1,10 +1,11 @@
 import React from 'react';
+import {Box} from "@chakra-ui/react";
 
 const GroupInfo = () => {
     return (
-        <div>
+        <Box h={"100 vh"} w={"20vw"}>
             Group Info
-        </div>
+        </Box>
     );
 };
 

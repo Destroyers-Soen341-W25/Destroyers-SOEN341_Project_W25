@@ -6,7 +6,7 @@ import TypingBox from "./TypingBox";
 
 const ChatBox = () => {
     return (
-           <Box borderColor="black" borderWidth={1} h={"100vh"} display={"flex"} flex="1" justifyContent={"center"} flexDirection="column" >
+           <Box borderColor="black" borderWidth={1} h={"100vh"} justifyContent={"center"} flexDirection="column" >
                <VStack>
                    <ChatHeader/>
                    <MessageBox/>

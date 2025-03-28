@@ -10,7 +10,7 @@ const ChatHistory = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch("/all-users"); // Fetch from API
+                const response = await fetch("/get-dms"); // Fetch from API
                 const data = await response.json();
                 setUsers(data.users); // Store users in state
             } catch (error) {

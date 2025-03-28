@@ -5,6 +5,7 @@ import './App.css';
 import App from './App';
 import {Provider} from "./components/ui/provider";
 import {Toaster} from "./components/ui/toaster";
+import {ChatProvider} from "./Context/ChatContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,7 +13,9 @@ root.render(
       <BrowserRouter>
           <Provider>
               <Toaster />
-              <App />
+              <ChatProvider>
+                  <App />
+              </ChatProvider>
           </Provider>
       </BrowserRouter>
   </React.StrictMode>
