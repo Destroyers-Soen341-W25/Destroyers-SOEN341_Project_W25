@@ -9,7 +9,7 @@ describe('API Unit Tests', () => {
     // User created successfully
     test('Register User - Success', async () => {
         const res = await request(app).post('/register').send({
-            name: 'testuser',
+            name: 'chandler123',
             password: 'password123',
             role: 'user'
         });
@@ -43,7 +43,7 @@ describe('API Unit Tests', () => {
     // Invalid credentials tests
     test('Login User - Unauthorized', async () => {
       const res = await request(app).post('/login').send({
-          name: 'testuser',
+          name: 'chandler123',
           password: 'wrongpassword'
       });
       expect(res.status).toBe(401);
@@ -84,7 +84,7 @@ describe('API Unit Tests', () => {
 
   // assign user to channel tests
   test('Assign User to Channel - Success', async () => {
-  const userId = 'user123';  
+  const userId = 'Chandler123';  
   const channelId = 'hello world'; 
 
   const res = await request(app)
