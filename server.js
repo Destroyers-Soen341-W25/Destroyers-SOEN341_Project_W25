@@ -20,6 +20,7 @@ import getchat from './getchat.js';
 import SendDM from './sendDM.js';
 import Sendmessage from './messages.js';
 import { WebSocketServer } from 'ws';
+import removemessages from './removemessage.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -250,6 +251,7 @@ app.post('/remove-messages', async (req, res) => {
         res.status(201).json({ result });
     } catch (error) {
         res.status(500).json({ message: 'Error removing messages', error: error.message });
+        console.log("Error removing messages:", error);
     }
 });
 //send a DM

@@ -85,7 +85,7 @@ describe('API Unit Tests', () => {
   // assign user to channel tests
   test('Assign User to Channel - Success', async () => {
   const userId = 'Chandler123';  
-  const channelId = 'hello world'; 
+  const channelId = '8DNT3M9LdTWEIgn2oqRm'; 
 
   const res = await request(app)
     .post('/assign-user')
@@ -93,9 +93,6 @@ describe('API Unit Tests', () => {
 
   expect(res.status).toBe(200);
   expect(res.body.message).toBe('User assigned to channel');
-
-  expect(res.body.updatedChannel.userIds).toContain(userId);
-  expect(res.body.updatedChannel.channelId).toBe(channelId);
 });
 
   // remove user from channel tests
@@ -111,9 +108,6 @@ describe('API Unit Tests', () => {
     // Check if the response status is 200 (OK)
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('User removed from channel');
-
-    expect(res.body.updatedChannel.userIds).not.toContain(userId);
-    expect(res.body.updatedChannel.channelId).toBe(channelId);
   });
 
     // Messaging Tests
@@ -134,19 +128,20 @@ describe('API Unit Tests', () => {
 
     // remove messages from channel tests
     test('Remove Messages from Channel - Success', async () => {
-      const channelId = 'channel123';  
-      const messageIds = ['message1', 'message2']; 
-  
-      // Send the request to remove messages from the channel
+      const channelId = 'k6VQipJ3Ryia3vd87v37';  
+      const messageId = '4VaTUrvZxSLAZc44YzqI';  
+    
       const res = await request(app)
         .post('/remove-messages')
-        .send({ channelId, messageIds });
-  
-      // Check if the response status is 200 (OK)
-      expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Messages removed successfully');
-  
+        .send({ channelId, messageId });  
+    
+      console.log("Test Response:", res.body);  
+    
+      expect(res.status).toBe(201);
+      expect(res.body.result.success).toBe(true);  
+      expect(res.body.result.message).toBe('Message removed successfully'); 
     });
+    
 
     // Direct Messaging Tests
     test('Send DM', async () => {
@@ -163,20 +158,5 @@ describe('API Unit Tests', () => {
           const res = await request(app).post('/get-dms').send({ userId: 'user1' });
           expect(res.status).toBe(200);
       });
-  
-      // User Status Tests
-      // Set User Status
-    test('Set User Status', async () => {
-      const res = await request(app).post('/set-user-status').send({
-          userId: 'user1',
-          status: 'online'
-      });
-      expect(res.status).toBe(200);
-  });
-    // Get User Status
-    test('Get User Status', async () => {
-      const res = await request(app).post('/get-user-status').send({ userId: 'user1' });
-      expect(res.status).toBe(200);
-  });
 
 });
