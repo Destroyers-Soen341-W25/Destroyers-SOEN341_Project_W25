@@ -3,7 +3,7 @@ import {Avatar, Box, Button, Flex, Image, VStack} from "@chakra-ui/react";
 import {useChat} from "../Context/ChatContext";
 
 const NavigationBar = () => {
-    const {selectedView, setSelectedView} = useChat();
+    const {setSelectedView} = useChat();
 
     return (
             <Box position="fixed" left="0" top="0" borderColor="black" borderWidth={1} w={"8vw"} h={"90vh"} display={"flex"} alignItems={"top"} justifyContent={"center"}>
