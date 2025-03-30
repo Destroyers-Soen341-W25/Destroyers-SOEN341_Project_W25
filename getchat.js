@@ -18,4 +18,4 @@ async function getchat(userId) {
 
 export default getchat;
 
-console.log(await getchat('84Jk1xiJIBRMeEf7A92D'));
+//console.log(await getchat('84Jk1xiJIBRMeEf7A92D'));

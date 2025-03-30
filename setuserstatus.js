@@ -1,6 +1,6 @@
 import db from './Database-conf.js';
 
-async function setstatus(userId,status) {
+async function setstatus(userId, status) {
     try {
         const userstatus = {
             status: status,
@@ -8,8 +8,8 @@ async function setstatus(userId,status) {
         };
 
         await db.collection('users').doc(userId).collection('status').doc('current status').set(userstatus, { merge: true });
-//        console.log('Current user status:', userstatus.id);
-        return { statusId: userstatus.id };
+        console.log(`User ${userId} status set to: ${status}`);
+        return { success: true, userId, status };
 
     } catch (error) {
         console.error('Error setting the user status:', error);
@@ -18,5 +18,3 @@ async function setstatus(userId,status) {
 }
 
 export default setstatus;
-//console.log(await setstatus('84Jk1xiJIBRMeEf7A92D', 'Online'));
-//console.log(await setstatus('84Jk1xiJIBRMeEf7A92D', 'Offline'));

@@ -20,6 +20,7 @@ import SendDM from "./sendDM.js";
 import getchat from './getchat.js';
 import getstatus from './getuserstatus.js';
 import setstatus from './setuserstatus.js';
+import getalluserstatus from './getalluserstatus.js';
 
 
 const app = express();
@@ -288,7 +289,17 @@ app.post('/get-user-status', async(req,res)=>{
     }
     });
 
-
+app.get('/all-user-statuses', async (req, res) => {
+    try {
+        console.log("Trying to fetch all user statuses");
+        const users = await getalluserstatus();
+        console.log("Users are: ", users);
+        res.status(200).json({ users });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error fetching users', error });
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
