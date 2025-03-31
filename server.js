@@ -20,13 +20,61 @@ import SendDM from "./sendDM.js";
 import getchat from './getchat.js';
 import getstatus from './getuserstatus.js';
 import setstatus from './setuserstatus.js';
-
+import removemessages from './removemessage.js';
+import { createJoinRequest, acceptJoinRequest, rejectJoinRequest, createInvite } from './requests.js';
 
 const app = express();
 app.use(bodyParser.json());
 
 // OR allow all origins (not recommended for production)
 app.use(cors({origin: "http://localhost:3001",credentials: true}));
+
+
+
+//creating join request
+app.post('/join-request', async (req, res) => {
+    const { channelId, userId } = req.body;
+    try {
+      const joinRequest = await createJoinRequest(channelId, userId);
+      res.status(201).json({ message: joinRequest });
+    } catch (error) {
+      res.status(500).json({ message: 'Error creating join request', error: error.message });
+    }
+  });
+
+  //accept join request
+  app.post('/accept-request', async (req, res) => {
+    const { channelId, userId } = req.body; // userId – тот, кто запросил присоединение
+    try {
+      await acceptJoinRequest(channelId, userId);
+      res.status(200).json({ message: 'Join request accepted' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error accepting join request', error: error.message });
+    }
+  });
+
+//reject join request
+  app.post('/reject-request', async (req, res) => {
+    const { channelId, userId } = req.body; // userId – тот, кто запросил присоединение
+    try {
+      await rejectJoinRequest(channelId, userId);
+      res.status(200).json({ message: 'Join request rejected' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error rejecting join request', error: error.message });
+    }
+  });
+
+
+ //send invite
+ app.post('/send-invite', async (req, res) => {
+    const { channelId, inviteeId, inviterId } = req.body;
+    try {
+      const invite = await createInvite(channelId, inviteeId, inviterId);
+      res.status(201).json({ message: invite });
+    } catch (error) {
+      res.status(500).json({ message: 'Error sending invite', error: error.message });
+    }
+  });
 
 
 
@@ -96,13 +144,13 @@ app.post('/get-user', async (req, res) => {
 
 //createchannel
 app.post('/create-channel', async (req, res) => {
-    const { channelName, channelType } = req.body;
+    const { channelName, channelType, creatorId } = req.body;
     if (!channelName || !channelType) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
     try {
-        console.log("Creating a channel...");
-        const channel = await createchannel(channelName, channelType);
+        console.log("Creating a channel... creator id is"+ creatorId);
+        const channel = await createchannel(channelName, channelType, creatorId);
         res.status(201).json({ message: 'Channel created successfully', channel });
     } catch (error) {
         res.status(500).json({ message: 'Error creating channel', error });
@@ -213,14 +261,14 @@ app.post('/deassign-user', async (req, res) => {
 
 //Send message
 app.post('/send-message', async (req, res) => {
-    const {channelId, message, userId} = req.body;
+    const { channelId, message, userId } = req.body;
     try {
-        await Sendmessage(userId, channelId, message);
-        res.status(201).json();
+      const result = await Sendmessage(userId, channelId, message);
+      res.status(201).json({  ...result, senderId: userId, content: message, timestamp: new Date().toISOString()  });
     } catch (error) {
-        res.status(500).json({ message: 'Error sending message', error });
+      res.status(500).json({ message: 'Error sending message', error });
     }
-});
+  });
 
 //Get messages
 app.post('/get-messages', async (req, res) => {
@@ -235,11 +283,13 @@ app.post('/get-messages', async (req, res) => {
 
 //remove messages from channel
 app.post('/remove-messages', async (req, res) => {
-    const { channelId, messageIds } = req.body;
+    const { channelId, messageId } = req.body;
     try {
-        await removeMessages(channelId, messageIds);
+        console.log("trying to remove message "+ messageId +" from channel "+ channelId);
+        await removemessages(channelId, messageId);
         res.status(200).json({ message: 'Messages removed successfully' });
     } catch (error) {
+        console.log("Error removing the message ",error);
         res.status(500).json({ message: 'Error removing messages', error });
     }
 });
@@ -247,12 +297,20 @@ app.post('/remove-messages', async (req, res) => {
 app.post('/send-dm', async (req, res) => {
     const { recipientId, senderId, message } = req.body;
     try {
-        await SendDM(senderId, message,recipientId);
-        res.status(201).json();
+      const result = await SendDM(senderId, message, recipientId);
+      console.log("Result of dm is: ", result);
+      res.status(201).json({ 
+        message: { 
+          id: result.messageId, 
+          senderId, 
+          content: message, 
+          timestamp: new Date().toISOString() 
+        } 
+      });
     } catch (error) {
-        res.status(500).json({ message: 'Error sending DM', error });
+      res.status(500).json({ message: 'Error sending DM', error: error.message });
     }
-});
+  });
 //get all DM
 app.post('/get-dms', async (req, res) => {
     const { userId } = req.body;

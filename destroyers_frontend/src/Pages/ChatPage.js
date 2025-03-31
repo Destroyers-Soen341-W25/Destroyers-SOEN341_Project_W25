@@ -5,6 +5,7 @@ import NavigationBar from "../Section/NavigationBar";
 import DMView from "../Views/DMView";
 import GeneralChannelsView from "../Views/GeneralChannelsView";
 import PrivateChannelsView from "../Views/PrivateChannelsView";
+import CreateChannelView from "../Views/CreateChannelView";
 import UserInfo from "../Section/UserInfo";
 import { ChatProvider } from "../Context/ChatContext";
 
@@ -19,7 +20,8 @@ const ChatPage = ({ userRole }) => {
         // Передаем setActiveView в GeneralChannelsView
         return <GeneralChannelsView userRole={userRole} setActiveView={setActiveView} />;
       case 'private':
-        return <PrivateChannelsView userRole={userRole} />;
+        return <PrivateChannelsView userRole={userRole} setActiveView={setActiveView} />;
+        case 'create': return <CreateChannelView userRole={userRole} setActiveView={setActiveView} />;
       default:
         return null;
     }

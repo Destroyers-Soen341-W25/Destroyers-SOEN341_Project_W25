@@ -4,7 +4,9 @@
   "private": true,
   "proxy": "http://localhost:3000",
   "dependencies": {
-    "@chakra-ui/react": "^3.13.0",
+    "@chakra-ui/checkbox": "^2.3.2",
+    "@chakra-ui/radio": "^2.1.2",
+    "@chakra-ui/react": "^3.15.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-free": "^6.7.2",

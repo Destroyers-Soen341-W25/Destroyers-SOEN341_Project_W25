@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Channel</title>
+  <link rel="stylesheet" href="super-admin.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Create a Private Channel</h2>
+    <form id="createChannelForm">
+      <label for="channelName">Channel Name:</label>
+      <input type="text" id="channelName" name="channelName" required />
+
+      <label for="usersSelect">Select Users:</label>
+      <select id="usersSelect" name="usersSelect" multiple size="10">
+        <!-- Опции будут заполнены через JS -->
+      </select>
+
+      <button type="submit">Create Channel</button>
+    </form>
+  </div>
+
+  <script src="create_channel.js"></script>
+</body>
+</html>
+

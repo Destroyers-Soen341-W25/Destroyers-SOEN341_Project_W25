@@ -6,7 +6,7 @@ import ChatHistory from "./ChatHistory";
 const SideBar = () => {
 
 return(
-        <Box borderColor="black" borderWidth={1} ml={"105px"} w={"18vw"} h={"90vh"} alignItems={"center"} justifyContent={"center"} >
+        <Box borderColor="black" borderWidth={1} ml={"8vw"} w={"18vw"} h={"90vh"} alignItems={"center"} justifyContent={"center"} >
             <VStack spacing={2} width="100%">
                 <SearchBar/>
                 <ChatHistory/>

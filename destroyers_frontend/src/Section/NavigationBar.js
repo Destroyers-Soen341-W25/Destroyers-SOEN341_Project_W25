@@ -15,7 +15,7 @@ const NavigationBar = ({setActiveView}) => {
                         </Button>
                         <Button variant="ghost" borderRadius="full" onClick={() => setActiveView('general')}>
                             <Avatar.Root size={"lg"} >
-                                <Avatar.Fallback name ="All-General Channels"/>
+                                <Avatar.Fallback name ="General Channels"/>
                             </Avatar.Root>
                         </Button>
                         <Button variant="ghost" borderRadius="full" onClick={() => setActiveView('private')}>
@@ -23,6 +23,10 @@ const NavigationBar = ({setActiveView}) => {
                                 <Avatar.Fallback name ="Private Channels"/>
                             </Avatar.Root>
                         </Button>
+                        <Button variant="ghost" borderRadius="full" onClick={() => setActiveView('create')}>
+                             <Avatar.Root size={"lg"}> 
+                                <Avatar.Fallback name="Create Channel" /> 
+                             </Avatar.Root> </Button>
                     </Flex>
                 </VStack>
             </Box>

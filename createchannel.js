@@ -1,22 +1,24 @@
 import db from './Database-conf.js';
 
-/*const channel = {
-    "channelname": "channel1",
-}*/
-async function createchannel(channelName, channelType) {
 
-    const channel={
-        channelname:channelName,
-        channeltype:channelType
+
+async function createchannel(channelName, channelType, creatorId) {
+
+    console.log("creator "+ creatorId);
+    const channel = {
+        channelname: channelName,
+        channelType: channelType,
+        createdby: creatorId,
+        userIds: []
+    };
+
+    try {
+        const result = await db.collection('channels').add(channel);
+        console.log('Channel created with ID: ', result.id);
+        return { id: result.id, ...channel }; //returning created channel with its id
+    } catch (error) {
+        console.error('Error creating channel ', error);
+        throw error;
     }
-
-    try{
-    const result = await db.collection('channels').add(channel);
-    console.log('Channel created with ID: ', result.id);
-}catch(error){
-    console.error('Error creating channel ', error);
 }
-}
-//createUser(user1);
 export default createchannel;
-//createchannel(channel);

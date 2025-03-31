@@ -14,34 +14,52 @@ const TypingBox = () => {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedChat) return;
+  
+    const tempId = Date.now();
+    const tempMessage = {
+      id: tempId,
+      senderId,
+      content: newMessage,
+      timestamp: new Date().toISOString(),
+    };
+  
+    setMessages([...messages, tempMessage]);
+    setNewMessage("");
+  
     try {
+      let response, serverMessage;
+  
       if (typeof selectedChat === "object" && selectedChat.channelname) {
-        // Это сообщение для канала – используем endpoint /send-message
-        console.log("SENDING A CHANNEL MESSAGE:"+ selectedChat.id+ " "+ newMessage+" "+senderId );
-        await axios.post("/send-message", {
-            channelId: selectedChat.id,
+        response = await axios.post("/send-message", {
+          channelId: selectedChat.id,
           message: newMessage,
           userId: senderId,
         });
+        serverMessage = {
+          id: response.data.messageId,
+          senderId: response.data.senderId,
+          content: response.data.content,
+          timestamp: response.data.timestamp,
+        };
       } else {
-        // Это личное сообщение (DM) – используем endpoint /send-dm
-        await axios.post("/send-dm", {
-          recipientId: selectedChat, // здесь selectedChat это id получателя
+        response = await axios.post("/send-dm", {
+          recipientId: selectedChat,
           senderId,
           message: newMessage,
         });
+        serverMessage = response.data.message;
       }
-      // Оптимистичное обновление UI – добавляем новое сообщение в состояние
-      const messageObj = {
-        id: Date.now(), // временный уникальный id
-        senderId,
-        content: newMessage,
-        timestamp: new Date().toISOString(),
-      };
-      setMessages([...messages, messageObj]);
-      setNewMessage("");
+  
+      console.log("serverMessage is: ", serverMessage);
+  
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) => (msg.id === tempId ? serverMessage : msg))
+      );
     } catch (error) {
       console.error("Error sending message", error);
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.id !== tempId)
+      );
     }
   };
 

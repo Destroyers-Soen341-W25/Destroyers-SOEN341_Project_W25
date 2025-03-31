@@ -15,7 +15,7 @@ const AuthenticationModal = ({ isModalOpen, setIsModalOpen }) => {
 
     const handleRegister = async (event) => {
         event.preventDefault();
-        const role = isAdmin ? 'admin' : 'member';
+        const role = 'member';
 
         try {
             const response = await fetch('http://localhost:3000/register', {
@@ -25,7 +25,7 @@ const AuthenticationModal = ({ isModalOpen, setIsModalOpen }) => {
             });
 
             const data = await response.json();
-            alert(data.message());
+            alert(data.message);
         } catch (error) {
             console.error('Error:', error);
         }

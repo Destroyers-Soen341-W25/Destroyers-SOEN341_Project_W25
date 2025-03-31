@@ -15,6 +15,7 @@ async function Sendmessage(userId,channelId, message) {
             timestamp: new Date(),
         });
         console.log('Message sent with id: ', messageRef.id);
+        return { messageId: messageRef.id };
     }catch(error){
         console.error('Error sending a message: ', error);
     }
