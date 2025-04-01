@@ -1,0 +1,18 @@
+Meeting #10
+Date: 2025-03-27
+Location: lab at school
+Attendees: All team members
+
+Discussion Points:
+Review of Sprint 4 goals and final checklist from the guidelines.
+Finalization of unique team features (e.g., chatbot, threads, file sharing).
+Refactoring and organizing project file structure per Appendix A.
+Delegation of tasks for code review and static analysis (linters, SonarQube).
+Setting up CI pipeline integration for unit tests and linting.
+
+Action Items:
+Finalize and test the unique features approved by the TA.
+Conduct peer code reviews following Appendix B guidelines.
+Run and document static analysis using selected tools.
+Ensure all unit tests pass and are integrated in GitHub Actions.
+Prepare demo environment for the upcoming lab presentation.
