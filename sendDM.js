@@ -1,6 +1,9 @@
 import db from './Database-conf.js';
 
 async function SendDM(userId, messageContent, receiverId) {
+    if (!receiverId) {
+        throw new Error("Receiver ID is not provided");
+    }
     try {
 
         const messageData = {
@@ -19,11 +22,9 @@ async function SendDM(userId, messageContent, receiverId) {
 
     } catch (error) {
         console.error('Error sending message:', error);
-        return { error: error.message };
+        throw error;
     }
 }
 
 export default SendDM;
 
-
-console.log(await SendDM('84Jk1xiJIBRMeEf7A92D', 'Heyyy!!', 'Bgj4JLm6AfQmiuDqqdyc'));

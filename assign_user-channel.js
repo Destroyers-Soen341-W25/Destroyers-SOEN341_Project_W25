@@ -4,7 +4,11 @@ export async function assignUserToChannel(userId,channelId){
     try{
         const channel= await fetchchannel(channelId);
         //console.log(channel);
-        if(channel.userIds.includes(userId)){
+        if (!channel.userIds) {
+            channel.userIds = [];
+        }
+
+        if (channel.userIds.includes(userId)) {
             return channel;
         }
         channel.userIds.push(userId);
