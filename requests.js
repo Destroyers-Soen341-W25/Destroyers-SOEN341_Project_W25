@@ -95,3 +95,59 @@ export async function createInvite(channelId, inviteeId, inviterId) {
     throw error;
   }
 }
+
+
+
+export async function getJoinRequests(channelId) {
+   try { 
+    const snapshot = await db 
+    .collection('channels') 
+    .doc(channelId) 
+    .collection('requests') 
+    .get(); 
+    
+    let requests = [];
+     snapshot.forEach(doc => { requests.push({ id: doc.id, ...doc.data() }); });
+      return requests; 
+    } catch (error) {
+       console.error("Error fetching join requests:", error);
+        throw error;
+       } 
+      }
+
+
+      export async function getInvites(channelId) { 
+        try { 
+          const snapshot = await db 
+          .collection('channels') 
+          .doc(channelId) 
+          .collection('invites') 
+          .get();
+          
+          let invites = []; 
+          snapshot.forEach(doc => { invites.push({ id: doc.id, ...doc.data() }); });
+          return invites; 
+        } catch (error) {
+           console.error("Error getting invites:", error);
+            throw error; 
+          } 
+        }
+
+        export async function getMyInvites(userId) {
+           try {
+             const channelsSnapshot = await db.collection('channels').get(); 
+             let myInvites = []; const promises = []; 
+             channelsSnapshot.forEach(channelDoc => { 
+              const channelId = channelDoc.id; 
+              const channelData = channelDoc.data(); 
+              const p = db .collection('channels') .doc(channelId) .collection('invites') .where('inviteeId', '==', userId) 
+              .get() 
+              .then(inviteSnapshot => { 
+                inviteSnapshot.forEach(inviteDoc => { myInvites.push({ id: inviteDoc.id, channelId, channelName: channelData.channelname, 
+                 ...inviteDoc.data() }); }); }); promises.push(p); }); await Promise.all(promises); return myInvites; } 
+                 catch (error) 
+                 { 
+                  console.error("Error getting my invites:", error); 
+                  throw error; 
+                } 
+              }

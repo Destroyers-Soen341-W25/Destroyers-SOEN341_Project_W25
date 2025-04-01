@@ -21,7 +21,7 @@ import getchat from './getchat.js';
 import getstatus from './getuserstatus.js';
 import setstatus from './setuserstatus.js';
 import removemessages from './removemessage.js';
-import { createJoinRequest, acceptJoinRequest, rejectJoinRequest, createInvite } from './requests.js';
+import { createJoinRequest, acceptJoinRequest, rejectJoinRequest, createInvite, getJoinRequests, getInvites, getMyInvites } from './requests.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -44,7 +44,7 @@ app.post('/join-request', async (req, res) => {
 
   //accept join request
   app.post('/accept-request', async (req, res) => {
-    const { channelId, userId } = req.body; // userId – тот, кто запросил присоединение
+    const { channelId, userId } = req.body; 
     try {
       await acceptJoinRequest(channelId, userId);
       res.status(200).json({ message: 'Join request accepted' });
@@ -55,7 +55,7 @@ app.post('/join-request', async (req, res) => {
 
 //reject join request
   app.post('/reject-request', async (req, res) => {
-    const { channelId, userId } = req.body; // userId – тот, кто запросил присоединение
+    const { channelId, userId } = req.body;
     try {
       await rejectJoinRequest(channelId, userId);
       res.status(200).json({ message: 'Join request rejected' });
@@ -76,6 +76,104 @@ app.post('/join-request', async (req, res) => {
     }
   });
 
+
+  app.get('/get-join-requests', async (req, res) => { 
+    const { channelId } = req.query;
+     if (!channelId) { 
+        return res.status(400).json({ message: "channelId required" }); 
+    } 
+    try {
+         const requests = await getJoinRequests(channelId);
+         
+          res.status(200).json({ requests }); 
+        }
+         catch (error) 
+         { 
+            res.status(500).json({ message: "Error fetching join requests", error: error.message });
+         } 
+   });
+
+
+   app.get('/get-invites', async (req, res) => { 
+    const { channelId } = req.query; 
+    if (!channelId) {
+        return res.status(400).json({ message: "channelId required" }); 
+    } 
+    try { 
+        const invites = await getInvites(channelId); 
+        
+        res.status(200).json({ invites }); 
+    } 
+    catch (error) 
+        { 
+            res.status(500).json({ message: "Error getting invites", error: error.message }); 
+        } 
+    });
+
+
+    
+
+
+    app.post('/accept-invite', async (req, res) => { 
+        const { channelId, userId } = req.body; 
+        if (!channelId || !userId) 
+            { 
+                return res.status(400).json({ message: "channelId and userId required" }); 
+            } 
+    
+    try { 
+        
+        await assignUserToChannel(userId, channelId);
+        
+        const invitesSnapshot = await db
+        .collection('channels')
+        .doc(channelId)
+        .collection('invites')
+        .where('inviteeId', '==', userId)
+        .get();
+        const batch = db.batch();
+        invitesSnapshot.forEach(doc => {
+        batch.delete(doc.ref);
+        });
+        await batch.commit();
+
+        res.status(200).json({ message: "Invite accepted" });
+
+    } catch (error) { res.status(500).json({ message: "Error accepting invite", error: error.message }); } });
+
+
+    app.post('/reject-invite', async (req, res) => { 
+        const { channelId, userId } = req.body; 
+        if (!channelId || !userId) { 
+            return res.status(400).json({ message: "channelId and userId required" }); 
+        } try 
+                { 
+                    const invitesSnapshot = await db 
+                        .collection('channels') 
+                        .doc(channelId) 
+                        .collection('invites') 
+                        .where('inviteeId', '==', userId) 
+                        .get(); const batch = db.batch(); 
+                        
+                        invitesSnapshot.forEach(doc => { batch.delete(doc.ref); });
+                         await batch.commit();
+
+    res.status(200).json({ message: "Invite rejected" });
+
+} catch (error) { res.status(500).json({ message: "Error rejecting invite", error: error.message }); } });
+
+
+app.get('/get-my-invites', async (req, res) => { 
+    const { userId } = req.query; 
+    if (!userId) { 
+        return res.status(400).json({ message: "userId required" }); 
+    } 
+    try { 
+        const invites = await getMyInvites(userId); res.status(200).json({ invites }); 
+    } catch (error) { 
+        res.status(500).json({ message: "Error fetching my invites", error: error.message }); 
+    } 
+});
 
 
 // User Registration
