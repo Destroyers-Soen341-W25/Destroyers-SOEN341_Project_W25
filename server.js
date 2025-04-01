@@ -2,6 +2,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import createUser from './create_user.js';
 import getUser from './getuser.js';
 import db from './Database-conf.js';
@@ -29,6 +31,16 @@ app.use(bodyParser.json());
 // OR allow all origins (not recommended for production)
 app.use(cors({origin: "http://localhost:3001",credentials: true}));
 
+
+// Creating hhtp server and socket
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: { origin: "http://localhost:3001", methods: ["GET", "POST"] }
+});
+
+io.on('connection', (socket) => {
+  console.log("New client connected:", socket.id);
+});
 
 
 //creating join request
@@ -362,7 +374,15 @@ app.post('/send-message', async (req, res) => {
     const { channelId, message, userId } = req.body;
     try {
       const result = await Sendmessage(userId, channelId, message);
-      res.status(201).json({  ...result, senderId: userId, content: message, timestamp: new Date().toISOString()  });
+      const messageData = {
+        ...result,
+        senderId: userId,
+        content: message,
+        timestamp: new Date().toISOString()
+      };
+      // Sending message to all clients 
+      io.emit('newMessage', messageData);
+      res.status(201).json(messageData);
     } catch (error) {
       res.status(500).json({ message: 'Error sending message', error });
     }
@@ -392,19 +412,19 @@ app.post('/remove-messages', async (req, res) => {
     }
 });
 //send a DM
+// sending message to all clients 
 app.post('/send-dm', async (req, res) => {
     const { recipientId, senderId, message } = req.body;
     try {
       const result = await SendDM(senderId, message, recipientId);
-      console.log("Result of dm is: ", result);
-      res.status(201).json({ 
-        message: { 
-          id: result.messageId, 
-          senderId, 
-          content: message, 
-          timestamp: new Date().toISOString() 
-        } 
-      });
+      const messageData = {
+        id: result.messageId,
+        senderId,
+        content: message,
+        timestamp: new Date().toISOString()
+      };
+      io.emit('newMessage', messageData);
+      res.status(201).json({ message: messageData });
     } catch (error) {
       res.status(500).json({ message: 'Error sending DM', error: error.message });
     }
@@ -447,7 +467,7 @@ app.post('/get-user-status', async(req,res)=>{
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 

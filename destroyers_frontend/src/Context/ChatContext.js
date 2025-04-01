@@ -1,36 +1,32 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
-  const [userRole, setUserRole] = useState('role'); // user или admin
-  const [selectedView, setSelectedView] = useState('dm');
-  const [chats, setChats] = useState([]); // список dms и каналов
-  const [messages, setMessages] = useState([]); // сообщения активного чата
-  const [selectedChat, setSelectedChat] = useState(null); // выбранный чат
-  const [status, setStatus] = useState(null); // статус пользователей
-  const [users, setUsers] = useState([]); // список всех пользователей
+  const [messages, setMessages] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Connecting to socket server
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+      console.log("Connected with socket id:", socket.id);
+    });
+
+    socket.on("newMessage", (message) => {
+   
+      setMessages(prevMessages => [...prevMessages, message]);
+    });
+
+    return () => socket.disconnect();
+  }, []);
 
   return (
-    <ChatContext.Provider
-      value={{
-        userRole,
-        setUserRole,
-        selectedView,
-        setSelectedView,
-        chats,
-        setChats,
-        messages,
-        setMessages,
-        selectedChat,
-        setSelectedChat,
-        status,
-        setStatus,
-        users,
-        setUsers,
-      }}
-    >
+    <ChatContext.Provider value={{ messages, setMessages, selectedChat, setSelectedChat, users, setUsers }}>
       {children}
     </ChatContext.Provider>
   );

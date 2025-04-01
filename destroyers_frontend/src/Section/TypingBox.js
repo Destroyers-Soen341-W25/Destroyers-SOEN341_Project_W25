@@ -15,15 +15,6 @@ const TypingBox = () => {
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedChat) return;
   
-    const tempId = Date.now();
-    const tempMessage = {
-      id: tempId,
-      senderId,
-      content: newMessage,
-      timestamp: new Date().toISOString(),
-    };
-  
-    setMessages([...messages, tempMessage]);
     setNewMessage("");
   
     try {
@@ -52,14 +43,8 @@ const TypingBox = () => {
   
       console.log("serverMessage is: ", serverMessage);
   
-      setMessages((prevMessages) =>
-        prevMessages.map((msg) => (msg.id === tempId ? serverMessage : msg))
-      );
     } catch (error) {
       console.error("Error sending message", error);
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== tempId)
-      );
     }
   };
 

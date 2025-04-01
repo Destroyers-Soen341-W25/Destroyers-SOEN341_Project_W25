@@ -54,7 +54,7 @@ const AuthenticationModal = ({ isModalOpen, setIsModalOpen }) => {
                 } else if (data.user.role === 'admin' || data.user.role === 'member') {
                     alert('Welcome back, ' + data.user.name + '!');
                     setTimeout(() => {
-                        window.location.href = '/Chatpage';
+                        window.location.href = 'http://localhost:3001/Chatpage';
                     }, 1000);
                 }
             } else {
