@@ -4,7 +4,7 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 import { useChat } from "../Context/ChatContext";
 
 const ChatHistory = () => {
-  const { setUsers, users, setSelectedChat, setMessages } = useChat();
+  const { setUsers, users, setSelectedChat, setMessages, userStatuses, setUserStatuses   } = useChat();
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,13 +15,13 @@ const ChatHistory = () => {
   useEffect(() => {
     const fetchUsersAndMessages = async () => {
       try {
-        // Получаем список всех пользователей
+        
         const usersResponse = await fetch("/all-users");
         const usersData = await usersResponse.json();
         setUsers(usersData.users);
 
         if (currentUserId) {
-          // Получаем историю сообщений для текущего пользователя
+         
           const messagesResponse = await fetch("/get-dms", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -30,7 +30,7 @@ const ChatHistory = () => {
           const messagesData = await messagesResponse.json();
 
           if (messagesData.dms) {
-            // Определяем, с кем есть переписка
+         
             const usersWithMessages = messagesData.dms.map((dm) =>
               dm.senderId === currentUserId ? dm.receiverId : dm.senderId
             );
@@ -52,10 +52,39 @@ const ChatHistory = () => {
     if (currentUserId) {
       fetchUsersAndMessages();
     }
-  }, [currentUserId]); // Только currentUserId в зависимостях
+  }, [currentUserId]); 
+
+
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      const statuses = {};
+      for (let user of users) {
+        try {
+          const response = await fetch("/get-user-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id }),
+          });
+          const data = await response.json();
+          if (data.userdata) {
+            statuses[user.id] = { 
+              status: data.userdata.status, 
+              lastseen: data.userdata.lastseen 
+            };
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      setUserStatuses(prev => ({ ...prev, ...statuses }));
+    };
+    if (users.length > 0) fetchStatuses();
+  }, [users]);
+
+
 
   const handleUserClick = async (userId) => {
-    // Устанавливаем выбранный чат через контекст
+ 
     setSelectedChat(userId);
     try {
       const response = await fetch("/get-dms", {
@@ -64,7 +93,7 @@ const ChatHistory = () => {
         body: JSON.stringify({ userId: currentUserId }),
       });
       const data = await response.json();
-      // Фильтруем сообщения для выбранного пользователя
+    
       const userMessages = data.dms.filter(
         (dm) => dm.senderId === userId || dm.receiverId === userId
       );
@@ -90,7 +119,7 @@ const ChatHistory = () => {
               onClick={() => handleUserClick(user.id)}
               cursor="pointer"
             >
-              <Text fontSize="md">{user.name}</Text>
+              <Text fontSize="md"> {user.name} - {userStatuses[user.id] ? (userStatuses[user.id].status === "Online" ? "Online" : "last seen: " + userStatuses[user.id].lastseen) : "Offline"} </Text>
             </Box>
           ))
         ) : (

@@ -8,6 +8,7 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [users, setUsers] = useState([]);
+  const [userStatuses, setUserStatuses] = useState({}); 
 
   useEffect(() => {
     // Connecting to socket server
@@ -15,6 +16,12 @@ export const ChatProvider = ({ children }) => {
 
     socket.on("connect", () => {
       console.log("Connected with socket id:", socket.id);
+      const storedUser = localStorage.getItem('user');
+
+      if (storedUser) {
+        const currentUser = JSON.parse(storedUser);
+        socket.emit('userConnected', currentUser.id);
+      }
     });
 
     socket.on("newMessage", (message) => {
@@ -22,11 +29,16 @@ export const ChatProvider = ({ children }) => {
       setMessages(prevMessages => [...prevMessages, message]);
     });
 
+
+    socket.on("userStatusUpdate", ({ userId, status, lastseen }) => {
+      setUserStatuses(prev => ({ ...prev, [userId]: { status, lastseen } }));
+    });
+
     return () => socket.disconnect();
   }, []);
 
   return (
-    <ChatContext.Provider value={{ messages, setMessages, selectedChat, setSelectedChat, users, setUsers }}>
+    <ChatContext.Provider value={{ messages, setMessages, selectedChat, setSelectedChat, users, setUsers, userStatuses, setUserStatuses  }}>
       {children}
     </ChatContext.Provider>
   );

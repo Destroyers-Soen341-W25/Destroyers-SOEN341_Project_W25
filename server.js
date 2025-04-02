@@ -28,7 +28,7 @@ import { createJoinRequest, acceptJoinRequest, rejectJoinRequest, createInvite, 
 const app = express();
 app.use(bodyParser.json());
 
-// OR allow all origins (not recommended for production)
+
 app.use(cors({origin: "http://localhost:3001",credentials: true}));
 
 
@@ -40,6 +40,26 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
   console.log("New client connected:", socket.id);
+
+
+  socket.on('userConnected', async (userId) => {
+    socket.userId = userId; 
+    await setstatus(userId, 'Online'); 
+   
+    io.emit('userStatusUpdate', { userId, status: 'Online' });
+  });
+
+
+  socket.on('disconnect', async () => {
+    const userId = socket.userId;
+    if (userId) {
+        const now = new Date();
+      await setstatus(userId, 'Offline'); 
+      io.emit('userStatusUpdate', { userId, status: 'Offline', lastseen: now.toISOString() });
+    }
+    console.log("Client disconnected:", socket.id);
+  });
+
 });
 
 
