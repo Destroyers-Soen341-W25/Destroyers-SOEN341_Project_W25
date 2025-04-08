@@ -12,7 +12,7 @@ export default function DestroyersJrWelcome({ onClose }) {
   return (
     <div className="welcome-slide-in">
       <div className="welcome-box">
-        <h2>👑 Destroyers Jr.</h2>
+        <h2>Hi there,I am Destroyers Jr.</h2>
         <p>
           Welcome to <strong>ChatHaven</strong>.<br />
           How are you feeling today?
