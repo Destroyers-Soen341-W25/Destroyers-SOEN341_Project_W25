@@ -4,7 +4,7 @@
   right: 0;
   height: 100vh;
   width: 100%;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.3);
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -13,29 +13,39 @@
 }
 
 .welcome-box {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
   border-radius: 16px 0 0 16px;
-  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px #b084f8;
   padding: 24px;
-  width: 350px;
-  height: fit-content;
-  margin-right: 0;
+  width: 360px;
+  color: white;
   animation: slideInRight 0.4s ease forwards;
   position: relative;
 }
 
-@keyframes slideInRight {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
+.jr-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.jr-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  animation: glow 2s infinite ease-in-out;
+}
+
+@keyframes glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px #fff);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px #facc15);
+  }
 }
 
 .mood-grid {
@@ -46,18 +56,20 @@
 }
 
 .mood-btn {
-  padding: 12px;
+  padding: 14px;
   font-size: 18px;
   border: none;
-  border-radius: 12px;
-  background-color: #f3f4f6;
+  border-radius: 999px;
+  background: #383b56;
+  color: #fff;
+  box-shadow: 0 0 6px rgba(154, 104, 255, 0.4);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .mood-btn:hover {
-  background-color: #e5e7eb;
   transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(154, 104, 255, 0.8);
 }
 
 .close-btn {
@@ -67,16 +79,25 @@
   background: none;
   border: none;
   font-size: 20px;
+  color: white;
   cursor: pointer;
 }
 
-/* Animations */
-@keyframes wiggle {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2deg); }
+.jr-response {
+  margin-top: 20px;
+  font-style: italic;
+  font-size: 16px;
+  animation: fadeIn 0.4s ease-in;
 }
-.animate-wiggle {
-  animation: wiggle 0.5s ease-in-out infinite;
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0%); }
 }
 
 @keyframes fade {
@@ -85,6 +106,14 @@
 }
 .animate-fade {
   animation: fade 1.2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
 }
 
 @keyframes zoom {
