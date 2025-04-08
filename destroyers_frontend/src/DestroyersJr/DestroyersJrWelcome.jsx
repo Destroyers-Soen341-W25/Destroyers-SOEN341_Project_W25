@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./DestroyersJrWelcome.css";
-import jrIcon from "../assets/destroyers-logo.png"; // Make sure your logo image is in src/assets
+import jrIcon from './destroyers-logo.png';
 
 const moods = [
   { emoji: "😎", label: "Chill", animation: "animate-pulse" },
