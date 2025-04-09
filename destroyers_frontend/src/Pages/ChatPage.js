@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  useColorMode,
+  IconButton,
+  useColorModeValue,
+  Avatar,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react";
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { ChatProvider } from "../Context/ChatContext";
 import NavigationBar from "../Section/NavigationBar";
 import DMView from "../Views/DMView";
 import GeneralChannelsView from "../Views/GeneralChannelsView";
 import PrivateChannelsView from "../Views/PrivateChannelsView";
 import CreateChannelView from "../Views/CreateChannelView";
-import UserInfo from "../Section/UserInfo";
-import { ChatProvider } from "../Context/ChatContext";
-import DestroyersJrWelcome from '../DestroyersJr/DestroyersJrWelcome'; // Adjust path if needed
+import DestroyersJrWelcome from '../DestroyersJr/DestroyersJrWelcome'; // Adjust if needed
 
 const ChatPage = ({ userRole }) => {
-  const [activeView, setActiveView] = useState('dm'); // Default view is DM
-  const [showWelcome, setShowWelcome] = useState(false); // Show Destroyers Jr. state
+  const [activeView, setActiveView] = useState('dm');
+  const [showWelcome, setShowWelcome] = useState(false);
+  const { colorMode, toggleColorMode } = useColorMode();
 
-  // Trigger welcome bot on first load (once per session)
   useEffect(() => {
     const alreadyWelcomed = sessionStorage.getItem('welcomed');
     if (!alreadyWelcomed) {
@@ -22,7 +31,6 @@ const ChatPage = ({ userRole }) => {
     }
   }, []);
 
-  // Handle sidebar view switching
   const renderActiveView = () => {
     switch (activeView) {
       case 'dm':
@@ -38,17 +46,48 @@ const ChatPage = ({ userRole }) => {
     }
   };
 
+  const bgGradient = useColorModeValue(
+    'linear(to-r, gray.50, white)',
+    'linear(to-br, gray.800, gray.900)'
+  );
+
   return (
     <>
-      {/* Show welcome slide-in if needed */}
       {showWelcome && <DestroyersJrWelcome onClose={() => setShowWelcome(false)} />}
-
       <ChatProvider>
-        <Box w="100vw" h="100vh" overflow="hidden" borderWidth={1}>
-          <Flex h="100vh">
-            <NavigationBar setActiveView={setActiveView} />
-            {renderActiveView()}
-            <UserInfo />
+        <Box w="100vw" h="100vh" bgGradient={bgGradient} overflow="hidden">
+          <Flex h="100vh" boxShadow="xl" borderRadius="xl" m={4} overflow="hidden">
+            {/* Left Navigation */}
+            <Box w="80px" bg={useColorModeValue("white", "gray.800")} borderRight="1px solid" borderColor="gray.200" py={4}>
+              <Flex direction="column" align="center" gap={4}>
+                <Tooltip label="Toggle Theme" placement="right">
+                  <IconButton
+                    icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                    onClick={toggleColorMode}
+                    variant="ghost"
+                    size="sm"
+                    aria-label="Toggle theme"
+                  />
+                </Tooltip>
+                <NavigationBar setActiveView={setActiveView} />
+              </Flex>
+            </Box>
+
+            {/* Main Content */}
+            <Box flex="1" bg={useColorModeValue("gray.50", "gray.700")} p={4}>
+              {renderActiveView()}
+            </Box>
+
+            {/* User Info Panel */}
+            <Box w="250px" bg={useColorModeValue("white", "gray.800")} p={4} borderLeft="1px solid" borderColor="gray.200">
+              <Flex align="center">
+                <Avatar name="Username" size="sm" mr={3} />
+                <Box>
+                  <Text fontWeight="medium">Username</Text>
+                  <Text fontSize="xs" color="gray.500">Online</Text>
+                </Box>
+              </Flex>
+            </Box>
           </Flex>
         </Box>
       </ChatProvider>
@@ -57,5 +96,3 @@ const ChatPage = ({ userRole }) => {
 };
 
 export default ChatPage;
-
-
