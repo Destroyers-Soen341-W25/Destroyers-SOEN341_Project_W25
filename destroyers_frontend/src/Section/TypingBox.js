@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 import { Box, Input, Button, HStack } from "@chakra-ui/react";
 import axios from 'axios';
 import { useChat } from "../Context/ChatContext";
+import EmojiPicker from 'emoji-picker-react'; 
 
 const TypingBox = () => {
   const [newMessage, setNewMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { selectedChat, messages, setMessages } = useChat();
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const senderId = currentUser?.id;
-  
+
 
 
   const handleSendMessage = async () => {
@@ -48,6 +50,12 @@ const TypingBox = () => {
     }
   };
 
+
+  const onEmojiClick = (emojiObject) => {
+    setNewMessage(prev => prev + emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSendMessage();
@@ -55,7 +63,7 @@ const TypingBox = () => {
   };
 
   return (
-    <Box borderColor="black" borderWidth={1} w="74vw" h="10vh" padding={2}>
+    <Box borderColor="black" borderWidth={1} w="74vw" h="10vh" padding={2} position="relative">
       <HStack spacing={2} h="100%">
         <Input
           placeholder="Type a message..."
@@ -64,7 +72,15 @@ const TypingBox = () => {
           onKeyPress={handleKeyPress}
         />
         <Button onClick={handleSendMessage}>Send</Button>
+        <Button onClick={() => setShowEmojiPicker(val => !val)}>
+          😊
+        </Button>
       </HStack>
+      {showEmojiPicker && (
+        <Box position="absolute" bottom="60px" right="20px" zIndex="1000">
+          <EmojiPicker onEmojiClick={onEmojiClick} />
+        </Box>
+      )}
     </Box>
   );
 };
