@@ -160,3 +160,85 @@ describe('API Unit Tests', () => {
       });
 
 });
+
+// Set User Status
+test('Set User Status - Success', async () => {
+  const res = await request(app)
+    .post('/set-user-status')
+    .send({ userId: 'user123', status: 'Online' });
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe('status was successfully updated');
+});
+
+// Get User Status
+test('Get User Status - Success', async () => {
+  const res = await request(app)
+    .post('/get-user-status')
+    .send({ userId: 'user123' });
+  expect(res.status).toBe(200);
+  expect(res.body).toHaveProperty('userdata');
+});
+
+test('Post Join Request - Success', async () => {
+  const res = await request(app)
+    .post('/join-request')
+    .send({ channelId: 'channelABC', userId: 'userXYZ' });
+  expect(res.status).toBe(201);
+  expect(res.body).toHaveProperty('message');
+});
+
+test('Accept Join Request - Success', async () => {
+  const res = await request(app)
+    .post('/accept-request')
+    .send({ channelId: 'channelABC', userId: 'userXYZ' });
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe('Join request accepted');
+});
+
+test('Reject Join Request - Success', async () => {
+  const res = await request(app)
+    .post('/reject-request')
+    .send({ channelId: 'channelABC', userId: 'userXYZ' });
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe('Join request rejected');
+});
+
+test('Send Invite - Success', async () => {
+  const res = await request(app)
+    .post('/send-invite')
+    .send({ channelId: 'channelABC', inviteeId: 'user2', inviterId: 'user1' });
+  expect(res.status).toBe(201);
+  expect(res.body).toHaveProperty('message');
+});
+
+test('Accept Invite - Success', async () => {
+  const res = await request(app)
+    .post('/accept-invite')
+    .send({ channelId: 'channelABC', userId: 'user2' });
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe('Invite accepted');
+});
+
+test('Reject Invite - Success', async () => {
+  const res = await request(app)
+    .post('/reject-invite')
+    .send({ channelId: 'channelABC', userId: 'user2' });
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe('Invite rejected');
+});
+
+test('Get Join Requests - Success', async () => {
+  const res = await request(app)
+    .get('/get-join-requests')
+    .query({ channelId: 'channelABC' });
+  expect(res.status).toBe(200);
+  expect(res.body).toHaveProperty('requests');
+});
+
+test('Get My Invites - Success', async () => {
+  const res = await request(app)
+    .get('/get-my-invites')
+    .query({ userId: 'user2' });
+  expect(res.status).toBe(200);
+  expect(res.body).toHaveProperty('invites');
+});
