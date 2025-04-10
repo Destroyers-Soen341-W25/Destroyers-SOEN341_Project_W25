@@ -1,6 +1,6 @@
 import db from './Database-conf.js';
 
-async function SendDM(userId, messageContent, receiverId) {
+async function SendDM(userId, messageContent, receiverId, messageType = "text") {
   if (!receiverId) {
     throw new Error("Receiver ID is not provided");
   }
@@ -11,6 +11,7 @@ async function SendDM(userId, messageContent, receiverId) {
       receiverId: receiverId,
       content: messageContent,
       timestamp: new Date(),
+      type: messageType   
     };
 
     const senderMessageRef = await db.collection('users').doc(userId).collection('messages').add(messageData);

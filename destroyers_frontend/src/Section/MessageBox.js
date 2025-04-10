@@ -8,6 +8,23 @@ const MessageBox = () => {
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const isMessagesAvailable = Array.isArray(messages) && messages.length > 0;
 
+
+  const getFileLink = (url) => {
+    if (url.startsWith('http')) {
+      return url;
+    }
+    return `${window.location.origin}${url}`;
+  };
+
+
+  const isImage = (url) => {
+    return /\.(jpeg|jpg|gif|png)$/i.test(url);
+  };
+
+  const isPdf = (url) => {
+    return /\.pdf$/i.test(url);
+  };
+
   const parseTimestamp = (timestamp) => {
    // console.log("Timestamp is: ", timestamp);
     if (
@@ -17,19 +34,14 @@ const MessageBox = () => {
       '_nanoseconds' in timestamp
     ) {
       const ms = timestamp._seconds * 1000 + Math.floor(timestamp._nanoseconds / 1000000);
-      const date = new Date(ms);
-      //console.log("parser returns: ", date);
-      return date;
+      return new Date(ms);
     }
     if (timestamp && typeof timestamp === 'object' && typeof timestamp.toDate === 'function') {
-      console.log("parser returns: ", timestamp.toDate());
       return timestamp.toDate();
     }
     if (typeof timestamp === 'string') {
       const date = new Date(timestamp);
-      if (!isNaN(date.getTime())) {
-        return date;
-      }
+      if (!isNaN(date.getTime())) return date;
     }
     return new Date(0);
   };
@@ -54,9 +66,6 @@ const MessageBox = () => {
       return;
     }
     try {
-
-      console.log("trying to remove message "+ messageId +" from channel "+ selectedChat.id);
-
       await axios.post("/remove-messages", {
         channelId: selectedChat.id,
         messageId: messageId,
@@ -73,35 +82,73 @@ const MessageBox = () => {
       <Text fontSize="xl" mb={2}>Messages</Text>
       <Box overflowY="auto" h="calc(100% - 50px)">
         {isMessagesAvailable ? (
-          sortedMessages.map((message) => (
-            <Box 
-              key={message.id} 
-              p={2} 
-              borderBottom="1px solid black"
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Box>
-                <Text fontSize="md">
-                  {getUsername(message.senderId)}: {message.content}
-                </Text>
-                <Text fontSize="xs" color="gray.500">
-                  {formatTimestamp(message.timestamp)}
-                </Text>
+          sortedMessages.map((message) => {
+            const fileLink = getFileLink(message.content);
+            return (
+              <Box 
+                key={message.id} 
+                p={2} 
+                borderBottom="1px solid black"
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Box>
+                  {message.type === "file" ? (
+                    isImage(fileLink) ? (
+                      <div>
+                        <Text fontSize="md">{getUsername(message.senderId)}: File attachment</Text>
+                        <img 
+                          src={fileLink} 
+                          alt="Preview" 
+                          style={{ maxWidth: "200px", maxHeight: "200px", marginTop: "5px" }}
+                        />
+                      </div>
+                    ) : isPdf(fileLink) ? (
+                      <div>
+                        <Text fontSize="md">{getUsername(message.senderId)}: PDF File</Text>
+                        <iframe 
+                          src={fileLink} 
+                          title="PDF Preview"
+                          style={{ width: "200px", height: "200px", marginTop: "5px", border: "1px solid #ccc" }}
+                        >
+                         Your browser does not support previews. 
+                          <a href={fileLink} target="_blank" rel="noopener noreferrer">Download PDF</a>
+                        </iframe>
+                      </div>
+                    ) : (
+                      
+                      <a 
+                        href={fileLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: "blue", textDecoration: "underline" }}
+                      >
+                        {getUsername(message.senderId)}: File attachment
+                      </a>
+                    )
+                  ) : (
+                    <Text fontSize="md">
+                      {getUsername(message.senderId)}: {message.content}
+                    </Text>
+                  )}
+                  <Text fontSize="xs" color="gray.500">
+                    {formatTimestamp(message.timestamp)}
+                  </Text>
+                </Box>
+                {currentUser && selectedChat && selectedChat.channelname && 
+                  (currentUser.role === "admin" || selectedChat.createdby === currentUser.id) && (
+                    <Button 
+                      size="sm" 
+                      colorScheme="red" 
+                      onClick={() => handleDeleteMessage(message.id)}
+                    >
+                      Delete
+                    </Button>
+                )}
               </Box>
-                                      {currentUser && selectedChat && selectedChat.channelname && 
-                          (currentUser.role === "admin" || selectedChat.createdby === currentUser.id) && (
-                            <Button 
-                              size="sm" 
-                              colorScheme="red" 
-                              onClick={() => handleDeleteMessage(message.id)}
-                            >
-                              Delete
-                            </Button>
-                        )}
-            </Box>
-          ))
+            );
+          })
         ) : (
           <Text>No messages</Text>
         )}

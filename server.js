@@ -24,12 +24,42 @@ import getstatus from './getuserstatus.js';
 import setstatus from './setuserstatus.js';
 import removemessages from './removemessage.js';
 import { createJoinRequest, acceptJoinRequest, rejectJoinRequest, createInvite, getJoinRequests, getInvites, getMyInvites } from './requests.js';
+import multer from 'multer';
 
 const app = express();
 app.use(bodyParser.json());
 
 
 app.use(cors({origin: "http://localhost:3001",credentials: true}));
+
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + '-' + file.originalname);
+    }
+  });
+  const upload = multer({ storage: storage });
+  
+
+  app.use('/uploads', express.static('uploads'));
+  
+
+  app.post('/upload', upload.single('file'), (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: 'File was not uploaded' });
+    }
+   
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.status(201).json({ url: fileUrl });
+  });
+  
+
+
 
 
 // Creating hhtp server and socket
@@ -391,14 +421,16 @@ app.post('/deassign-user', async (req, res) => {
 
 //Send message
 app.post('/send-message', async (req, res) => {
-    const { channelId, message, userId } = req.body;
+    const { channelId, message, userId, messageType } = req.body;
     try {
-      const result = await Sendmessage(userId, channelId, message);
+      const type = messageType || "text";
+      const result = await Sendmessage(userId, channelId, message, type);
       const messageData = {
         ...result,
         senderId: userId,
         content: message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        type: type
       };
       // Sending message to all clients 
       io.emit('newMessage', messageData);
@@ -434,14 +466,16 @@ app.post('/remove-messages', async (req, res) => {
 //send a DM
 // sending message to all clients 
 app.post('/send-dm', async (req, res) => {
-    const { recipientId, senderId, message } = req.body;
+    const { recipientId, senderId, message, messageType } = req.body;
     try {
-      const result = await SendDM(senderId, message, recipientId);
+      const type = messageType || "text";
+      const result = await SendDM(senderId, message, recipientId, type);
       const messageData = {
         id: result.messageId,
         senderId,
         content: message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        type: type
       };
       io.emit('newMessage', messageData);
       res.status(201).json({ message: messageData });

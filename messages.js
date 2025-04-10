@@ -6,13 +6,14 @@ const message ={
     content: 'please work!!',
 }
 
-async function Sendmessage(userId,channelId, message) {
+async function Sendmessage(userId,channelId, message, messageType = "text") {
     try{
         const messageRef = db.collection('channels').doc(channelId).collection('messages').doc();
         await messageRef.set({
             senderId: userId,
             content: message,
             timestamp: new Date(),
+            type: messageType
         });
         console.log('Message sent with id: ', messageRef.id);
         return { messageId: messageRef.id };
