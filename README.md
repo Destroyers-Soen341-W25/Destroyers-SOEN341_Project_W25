@@ -22,5 +22,7 @@ Users can create topic-specific channels, share media, and engage in one-on-one 
 # Technologies
 * Jetbrains
 * VScode
-* Express
+* Node.js Express
 * Firebase
+* React
+* Webstorm
