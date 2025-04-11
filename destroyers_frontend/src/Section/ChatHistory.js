@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import {Avatar, Box, Circle, Float, HStack, Text, VStack} from "@chakra-ui/react";
 import { useChat } from "../Context/ChatContext";
 
 const ChatHistory = () => {
@@ -119,7 +119,20 @@ const ChatHistory = () => {
               onClick={() => handleUserClick(user.id)}
               cursor="pointer"
             >
-              <Text fontSize="md"> {user.name} - {userStatuses[user.id] ? (userStatuses[user.id].status === "Online" ? "Online" : "last seen: " + userStatuses[user.id].lastseen) : "Offline"} </Text>
+              <HStack>
+                 <Avatar.Root size={"lg"} >
+                    <Avatar.Fallback name ={user.name}/>
+                    <Float placement="bottom-end" offsetX="1" offsetY="1">
+                      <Circle
+                          bg={userStatuses[user.id]?.status === "Online" ? "green.500" : "red.500"}
+                          size="8px"
+                          outline="0.2em solid"
+                          outlineColor="bg"
+                      />
+                    </Float>
+                  </Avatar.Root>
+                <Text fontSize="md"> {user.name} </Text>
+              </HStack>
             </Box>
           ))
         ) : (
@@ -131,3 +144,5 @@ const ChatHistory = () => {
 };
 
 export default ChatHistory;
+
+{/*{userStatuses[user.id] ? (userStatuses[user.id].status === "Online" ? "Online" : "last seen: " + userStatuses[user.id].lastseen) : "Offline"}*/}
