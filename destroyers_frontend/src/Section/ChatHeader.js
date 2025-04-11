@@ -1,150 +1,3 @@
-// import React from 'react';
-// import { Box, Text, Button } from "@chakra-ui/react";
-// import { useChat } from "../Context/ChatContext";
-// import axios from 'axios';
-//
-// const ChatHeader = () => {
-//   const { selectedChat, setSelectedChat, setMessages, users, userStatuses } = useChat();
-//   const currentUser = JSON.parse(localStorage.getItem("user"));
-//
-//
-//   const getChatTitle = () => {
-//     if (!selectedChat) return "Chat Header";
-//     // Если selectedChat – объект с channelname, это канал
-//     if (typeof selectedChat === "object" && selectedChat.channelname) {
-//       return selectedChat.channelname;
-//     }
-//     // Иначе считаем, что это DM и ищем пользователя по id
-//     const chatUser = users.find(user => user.id === selectedChat);
-//     return chatUser ? chatUser.name : "Unknown User";
-//   };
-//
-//   const handleLeaveChannel = async () => {
-//     if (!selectedChat || !selectedChat.id) return;
-//     try {
-//       await axios.post("/deassign-user", {
-//         channelId: selectedChat.id,
-//         userId: currentUser.id,
-//       });
-//       // После успешного запроса удаляем канал из выбранного чата
-//       setSelectedChat(null);
-//       setMessages([]);
-//     } catch (error) {
-//       console.error("Error leaving channel", error);
-//     }
-//   };
-//
-//   function getOnlineCount(memberIds) {
-//     return memberIds?.filter(id => userStatuses[id]?.status === 'online').length || 0;
-//   }
-//
-//
-//   return (
-//     // <Box
-//     //   borderColor="black"
-//     //   w="74vw"
-//     //   h="8vh"
-//     //   padding={2}
-//     //   borderWidth={1}
-//     //   display="flex"
-//     //   alignItems="center"
-//     //   justifyContent="space-between"
-//     // >
-//     //   <Text fontSize="lg">{getChatTitle()}</Text>
-//     //   {/* Показываем кнопку только если это канал (есть поле channelname) */}
-//     //   {selectedChat && typeof selectedChat === "object" && selectedChat.channelname && (
-//     //     <Button size="sm" colorScheme="red" onClick={handleLeaveChannel}>
-//     //       Leave Channel
-//     //     </Button>
-//     //   )}
-//     // </Box>
-//
-//
-//       // <Box
-//       //     borderColor="black"
-//       //     w="74vw"
-//       //     h="8vh"
-//       //     padding={2}
-//       //     borderWidth={1}
-//       //     display="flex"
-//       //     alignItems="center"
-//       //     justifyContent="space-between"
-//       // >
-//       //   <Box>
-//       //     <Text fontSize="lg">{getChatTitle()}</Text>
-//       //
-//       //     {selectedChat && typeof selectedChat === "object" && !selectedChat.channelname ? (
-//       //         // DM View
-//       //         <>
-//       //           {userStatuses[selectedChat._id] && (
-//       //               <Text fontSize="sm" color={userStatuses[selectedChat._id].status === "online" ? "green" : "gray"}>
-//       //                 {userStatuses[selectedChat._id].status === "online"
-//       //                     ? "Online"
-//       //                     : `Offline • Last seen ${new Date(userStatuses[selectedChat._id].lastseen).toLocaleString()}`}
-//       //               </Text>
-//       //           )}
-//       //         </>
-//       //     ) : (
-//       //         // Channel View (General or Private)
-//       //         <>
-//       //           {selectedChat.members && (
-//       //               <Text fontSize="sm" color="gray.600">
-//       //                 {selectedChat.members.length} members • {selectedChat.members.filter(id => userStatuses[id]?.status === "online").length} online
-//       //               </Text>
-//       //           )}
-//       //         </>
-//       //     )}
-//       //   </Box>
-//       //
-//       //   {selectedChat && typeof selectedChat === "object" && selectedChat.channelname && (
-//       //       <Button size="sm" colorScheme="red" onClick={handleLeaveChannel}>
-//       //         Leave Channel
-//       //       </Button>
-//       //   )}
-//       //</Box>
-//
-//       <Box
-//           borderColor="black"
-//           w="74vw"
-//           h="8vh"
-//           padding={2}
-//           borderWidth={1}
-//           display="flex"
-//           alignItems="center"
-//           justifyContent="space-between"
-//       >
-//         <Box>
-//           <Text fontSize="lg">{getChatTitle()}</Text>
-//
-//           {/* DM View: Show status */}
-//           {selectedChat?.isDM && userStatuses[selectedChat.userId] && (
-//               <Text fontSize="sm" color="gray.600">
-//                 {userStatuses[selectedChat.userId].status === 'online'
-//                     ? 'Online'
-//                     : `Offline • Last seen ${new Date(userStatuses[selectedChat.userId].lastseen).toLocaleString()}`}
-//               </Text>
-//           )}
-//
-//           {/* Channel Views: Show member count and online count */}
-//           {selectedChat?.channelname && (
-//               <Text fontSize="sm" color="gray.600">
-//                 {selectedChat.members?.length || 0} members • {getOnlineCount(selectedChat.members)} online
-//               </Text>
-//           )}
-//         </Box>
-//
-//         {selectedChat?.channelname && (
-//             <Button size="sm" colorScheme="red" onClick={handleLeaveChannel}>
-//               Leave Channel
-//             </Button>
-//         )}
-//       </Box>
-//
-//
-//   );
-// };
-//
-// export default ChatHeader;
 
 import React from 'react';
 import { Box, Text, Button, Flex } from "@chakra-ui/react";
@@ -182,7 +35,12 @@ const ChatHeader = () => {
   };
 
   function getOnlineCount(memberIds) {
-    return memberIds?.filter(id => userStatuses[id]?.status === 'online').length || 0;
+    if (!memberIds || !Array.isArray(memberIds)) return 0;
+
+    // Count members with 'Online' status (capital 'O' to match your data)
+    return memberIds.filter(id =>
+        userStatuses[id] && userStatuses[id].status === 'Online'
+    ).length;
   }
 
   // Format last seen time in a user-friendly way
@@ -226,6 +84,45 @@ const ChatHeader = () => {
 
   const userStatus = getDmUserStatus();
 
+  // Calculate member count for channel
+  const getMemberCount = () => {
+    if (selectedChat?.members && Array.isArray(selectedChat.members)) {
+      return selectedChat.members.length;
+    }
+
+    // Also check for memberIds which might be an alternative property name
+    if (selectedChat?.memberIds && Array.isArray(selectedChat.memberIds)) {
+      return selectedChat.memberIds.length;
+    }
+
+    // Check if we have users assigned to the channel
+    if (selectedChat?.users && Array.isArray(selectedChat.users)) {
+      return selectedChat.users.length;
+    }
+
+    return 0;
+  };
+
+  // Get array of member IDs, checking different possible property names
+  const getMemberIds = () => {
+    if (selectedChat?.members && Array.isArray(selectedChat.members)) {
+      return selectedChat.members;
+    }
+
+    if (selectedChat?.memberIds && Array.isArray(selectedChat.memberIds)) {
+      return selectedChat.memberIds;
+    }
+
+    if (selectedChat?.users && Array.isArray(selectedChat.users)) {
+      return selectedChat.users;
+    }
+
+    return [];
+  };
+
+  // Debug log to see status values
+  console.log("DM User Status:", userStatus);
+
   return (
       <Box
           borderColor="black"
@@ -247,11 +144,11 @@ const ChatHeader = () => {
                     w="8px"
                     h="8px"
                     borderRadius="full"
-                    bg={userStatus.status === 'online' ? "green.400" : "red.400"}
+                    bg={userStatus.status === 'Online' ? "green.500" : "red.500"}
                     mr={2}
                 />
                 <Text fontSize="sm" color="gray.600">
-                  {userStatus.status === 'online'
+                  {userStatus.status === 'Online'
                       ? 'Online'
                       : `Offline • Last seen ${formatLastSeen(userStatus.lastseen)}`}
                 </Text>
@@ -261,7 +158,7 @@ const ChatHeader = () => {
           {/* Channel Views: Show member count and online count */}
           {selectedChat?.channelname && (
               <Text fontSize="sm" color="gray.600">
-                {/*{selectedChat.members?.length || 0} members • {getOnlineCount(selectedChat.members)} online*/}
+                {getMemberCount()} members • {getOnlineCount(getMemberIds())} online
               </Text>
           )}
         </Box>

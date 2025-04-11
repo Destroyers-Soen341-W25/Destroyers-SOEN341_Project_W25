@@ -8,7 +8,8 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [users, setUsers] = useState([]);
-  const [userStatuses, setUserStatuses] = useState({}); 
+  const [userStatuses, setUserStatuses] = useState({});
+  const [chats, setChats] = useState([]);
 
   useEffect(() => {
     // Connecting to socket server
@@ -38,7 +39,7 @@ export const ChatProvider = ({ children }) => {
   }, []);
 
   return (
-    <ChatContext.Provider value={{ messages, setMessages, selectedChat, setSelectedChat, users, setUsers, userStatuses, setUserStatuses  }}>
+    <ChatContext.Provider value={{ messages, setMessages, selectedChat, setSelectedChat, users, setUsers, userStatuses, setUserStatuses, chats, setChats  }}>
       {children}
     </ChatContext.Provider>
   );
