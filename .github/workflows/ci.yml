@@ -1,0 +1,35 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - tmp-stash-branch
+  pull_request:
+    branches:
+      - tmp-stash-branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16" # Use the version that your project requires (e.g., 16 or 18)
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application (optional)
+        run: npm run build # Only run if you have a build script for production
+
+      - name: Deploy application (optional)
+        run: npm run deploy # If you have a deployment script defined
+        if: github.ref == 'refs/heads/main' # Only deploy when pushing to main branch
